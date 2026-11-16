@@ -43,7 +43,7 @@ export function Overview({ data, rows, columns, selected, onSelect }: Props) {
       <table class="overview">
         <thead>
           <tr>
-            <th scope="col">Election</th>
+            <th scope="col">Year</th>
             {columns.map((c) => (
               <th key={c.key} scope="col">
                 {c.label}
@@ -74,7 +74,10 @@ export function Overview({ data, rows, columns, selected, onSelect }: Props) {
                         class="swatch"
                         style={{ background: candidateColor(candidates, sim.winner) }}
                       />
-                      <span class="who">{shortName(candidates, sim.winner)}</span>{" "}
+                      {/* On phones only changed winners repeat the name, so the table fits. */}
+                      <span class={i > 0 && !flipped ? "who same" : "who"}>
+                        {shortName(candidates, sim.winner)}
+                      </span>{" "}
                       <span class="num">
                         {sim.winner === null ? "—" : ev}
                         <span class="of">/{sim.totalElectoralVotes}</span>

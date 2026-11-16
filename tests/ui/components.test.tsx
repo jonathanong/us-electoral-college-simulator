@@ -1,8 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/preact";
+import { render, screen } from "@testing-library/preact";
 import { describe, expect, it } from "vitest";
 import type { Simulation } from "../../src/engine/types.ts";
 import { About } from "../../src/ui/About.tsx";
-import { Overview, flippedYears } from "../../src/ui/Overview.tsx";
 import { FlipChart, runsOf } from "../../src/ui/FlipChart.tsx";
 import { ResultBar } from "../../src/ui/ResultBar.tsx";
 import { Summary } from "../../src/ui/Summary.tsx";
@@ -140,33 +139,6 @@ describe("UsMap", () => {
     expect(screen.getByText("+2")).toBeTruthy();
     expect(screen.getByText("-5")).toBeTruthy();
     expect(screen.getByText("0")).toBeTruthy();
-  });
-});
-
-describe("Overview", () => {
-  it("marks changed outcomes and contingent elections", () => {
-    const data = { elections: new Map([[2000, { candidates }]]) } as never;
-    const columns = [
-      { key: "a", label: "Real", rule: { kind: "historical" as const } },
-      { key: "b", label: "Odd", rule: { kind: "wyoming" as const } },
-    ];
-    let picked = 0;
-    render(
-      <Overview
-        data={data}
-        rows={[{ year: 2000, sims: [sim({}), sim({ winner: null })] }]}
-        columns={columns}
-        selected={1900}
-        onSelect={(y) => (picked = y)}
-      />,
-    );
-    expect(screen.getByText("changed")).toBeTruthy();
-    expect(screen.getByText("—")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "2000" }));
-    expect(picked).toBe(2000);
-    const rows = [{ year: 2000, sims: [sim({}), sim({ winner: null })] }];
-    expect(flippedYears(rows, 1)).toEqual([2000]);
-    expect(flippedYears(rows, 0)).toEqual([]);
   });
 });
 

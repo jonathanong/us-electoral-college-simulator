@@ -342,6 +342,7 @@ input[type="range"] {
 .map .label text {
   font: 600 13px var(--sans);
   text-anchor: middle;
+  dominant-baseline: central;
   fill: var(--ink);
   paint-order: stroke;
 }
@@ -470,12 +471,28 @@ footer {
   .controls .wide {
     grid-column: 1 / -1;
   }
+  .overview {
+    font-size: 0.85rem;
+  }
   .overview th,
   .overview td {
-    padding: 6px 8px;
+    padding: 6px 4px;
   }
-  .overview .of {
+  .overview th:first-child {
+    padding-left: 8px;
+  }
+  /* Name on one line, electors underneath, so four columns fit a phone. */
+  .overview td .who:not(.same) ~ .num {
+    display: block;
+    padding-left: calc(0.8em + 6px);
+  }
+  .overview .of,
+  .overview .who.same {
     display: none;
+  }
+  .overview thead th {
+    white-space: normal;
+    vertical-align: bottom;
   }
   .overview .flag {
     display: none;
