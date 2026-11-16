@@ -55,6 +55,15 @@ describe("apportion", () => {
     });
   });
 
+  it("does not give a remainder seat to a state already rounded up to one", () => {
+    const pops = new Map([
+      ["A", 5600],
+      ["B", 3450],
+      ["C", 950],
+    ]);
+    expect(Object.fromEntries(apportion(pops, 10, "hamilton"))).toEqual({ A: 6, B: 3, C: 1 });
+  });
+
   it("rejects House sizes smaller than the number of states", () => {
     expect(() => apportion(pops, 2, "huntington-hill")).toThrow(RangeError);
     expect(() => apportion(pops, 4.5, "hamilton")).toThrow(RangeError);

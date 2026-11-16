@@ -19,6 +19,11 @@ function positiveInt(value: string | null, fallback: number): number {
   return Number.isInteger(n) && n > 0 ? n : fallback;
 }
 
+/** Same bounds as the controls, so a shared URL cannot request an enormous House. */
+export const LIMITS = { minSize: 48, maxSize: 5000, minPerRep: 30_000 } as const;
+
+const clampSize = (n: number) => Math.min(LIMITS.maxSize, Math.max(LIMITS.minSize, n));
+
 function parseRule(params: URLSearchParams): HouseRule {
   switch (params.get("rule")) {
     case "historical":
@@ -26,14 +31,18 @@ function parseRule(params: URLSearchParams): HouseRule {
     case "wyoming":
       return { kind: "wyoming" };
     case "fixed":
-      return { kind: "fixed", size: positiveInt(params.get("size"), 435) };
+      return { kind: "fixed", size: clampSize(positiveInt(params.get("size"), 435)) };
     case "ratio":
-      return { kind: "ratio", perRep: positiveInt(params.get("perRep"), 500_000) };
+      return {
+        kind: "ratio",
+        perRep: Math.max(LIMITS.minPerRep, positiveInt(params.get("perRep"), 500_000)),
+      };
     case "custom": {
       const sizes: Record<number, number> = {};
       for (const pair of (params.get("sizes") ?? "").split(",")) {
         const [census, size] = pair.split(":").map(Number);
-        if (Number.isInteger(census) && Number.isInteger(size) && size! > 0) sizes[census!] = size!;
+        if (Number.isInteger(census) && Number.isInteger(size) && size! > 0)
+          sizes[census!] = clampSize(size!);
       }
       return { kind: "custom", sizes };
     }

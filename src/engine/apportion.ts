@@ -60,12 +60,14 @@ function hamilton(pops: Pops, size: number): Map<StateCode, number> {
   const total = [...pops.values()].reduce((a, b) => a + b, 0);
   const rows = [...pops].map(([state, pop]) => {
     const quota = (pop * size) / total;
-    return { state, rem: quota - Math.floor(quota), seats: Math.max(1, Math.floor(quota)) };
+    // A state whose quota is below one already got its fractional claim via the minimum seat.
+    const rem = quota < 1 ? -1 : quota - Math.floor(quota);
+    return { state, rem, seats: Math.max(1, Math.floor(quota)) };
   });
   let remaining = size - rows.reduce((a, r) => a + r.seats, 0);
   const order = rows.toSorted((a, b) => b.rem - a.rem || (a.state < b.state ? -1 : 1));
   for (const row of order) {
-    if (remaining <= 0) break;
+    if (remaining <= 0 || row.rem < 0) break;
     row.seats++;
     remaining--;
   }

@@ -39,3 +39,4 @@ for (const c of [1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 201
   );
 }
 console.log("strict failures:", fails);
+if (fails) process.exitCode = 1;

@@ -16,6 +16,13 @@ describe("parseState", () => {
     expect(rule("?rule=wyoming")).toEqual({ kind: "wyoming" });
     expect(rule("?rule=fixed&size=700")).toEqual({ kind: "fixed", size: 700 });
     expect(rule("?rule=fixed&size=-3")).toEqual({ kind: "fixed", size: 435 });
+    expect(rule("?rule=fixed&size=99999999")).toEqual({ kind: "fixed", size: 5000 });
+    expect(rule("?rule=fixed&size=3")).toEqual({ kind: "fixed", size: 48 });
+    expect(rule("?rule=ratio&perRep=1")).toEqual({ kind: "ratio", perRep: 30000 });
+    expect(rule("?rule=custom&sizes=2020:90000000")).toEqual({
+      kind: "custom",
+      sizes: { 2020: 5000 },
+    });
     expect(rule("?rule=ratio&perRep=40000")).toEqual({ kind: "ratio", perRep: 40000 });
     expect(rule("?rule=custom&sizes=1910:500,2020:900,bad,1950:0")).toEqual({
       kind: "custom",

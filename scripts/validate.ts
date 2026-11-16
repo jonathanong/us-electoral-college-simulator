@@ -105,3 +105,4 @@ for (const [year, st] of new Set(dist.map((r) => key(r.year, r.state)))
   if (sum !== ws.length + 2) bad(`${year} ${st} EV ${sum} != ${ws.length + 2}`);
 }
 console.log("problems:", problems);
+if (problems) process.exitCode = 1;
