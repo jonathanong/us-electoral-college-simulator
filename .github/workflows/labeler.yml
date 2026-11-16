@@ -1,0 +1,18 @@
+name: Labeler
+
+on:
+  pull_request_target:
+
+permissions:
+  contents: read
+
+jobs:
+  label:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      # No checkout: the labeler reads .github/labeler.yml from the base branch via the API.
+      - uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0

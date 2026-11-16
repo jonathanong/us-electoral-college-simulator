@@ -1,23 +1,19 @@
 {
   "name": "us-electoral-college-simulator",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "private": true,
   "license": "MIT",
-  "engines": {
-    "node": ">=24"
-  },
-  "packageManager": "pnpm@12.21.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "test": "vitest run --coverage",
-    "data": "node scripts/build-data.ts"
+    "data:validate": "node scripts/validate.ts && node scripts/validate-hh.ts"
   },
   "dependencies": {
     "d3-geo": "^3.1.2",
@@ -29,8 +25,10 @@
     "@preact/preset-vite": "^2.10.6",
     "@testing-library/preact": "^3.2.6",
     "@types/d3-geo": "^3.1.1",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^26.6.6",
     "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
     "@vitest/coverage-v8": "^5.1.0",
     "jsdom": "^31.0.1",
     "oxfmt": "^0.78.0",
@@ -38,5 +36,9 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.0"
-  }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.21.0"
 }
