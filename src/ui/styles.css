@@ -171,6 +171,7 @@ main > section {
   background: color-mix(in oklab, var(--accent) 16%, transparent);
   font-weight: 600;
 }
+.overview-wrap .note { font: 0.8rem var(--sans); color: var(--ink-2); margin: 0; padding: 8px 10px; }
 .flag {
   margin-left: 6px;
   font-size: 0.7rem;

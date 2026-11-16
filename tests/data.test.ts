@@ -5,7 +5,7 @@ import { apportion } from "../src/engine/apportion.ts";
 import { simulate, statePopulations } from "../src/engine/simulate.ts";
 import { flips, sweep } from "../src/engine/sweep.ts";
 import type { Settings } from "../src/engine/types.ts";
-import { fullName } from "../src/ui/colors.ts";
+import { fullName, shortName } from "../src/ui/colors.ts";
 
 const historical: Settings = {
   rule: { kind: "historical" },
@@ -45,6 +45,39 @@ const WINNERS: Record<number, string> = {
   2024: "Trump",
 };
 
+/** Electoral votes actually cast, by surname (National Archives). */
+const CAST: Record<number, Record<string, number>> = {
+  1912: { Wilson: 435, Roosevelt: 88, Taft: 8 },
+  1916: { Wilson: 277, Hughes: 254 },
+  1920: { Harding: 404, Cox: 127 },
+  1924: { Coolidge: 382, Davis: 136, "La Follette": 13 },
+  1928: { Hoover: 444, Smith: 87 },
+  1932: { Roosevelt: 472, Hoover: 59 },
+  1936: { Roosevelt: 523, Landon: 8 },
+  1940: { Roosevelt: 449, Willkie: 82 },
+  1944: { Roosevelt: 432, Dewey: 99 },
+  1948: { Truman: 303, Dewey: 189, Thurmond: 39 },
+  1952: { Eisenhower: 442, Stevenson: 89 },
+  1956: { Eisenhower: 457, Stevenson: 73, Jones: 1 },
+  1960: { Kennedy: 303, Nixon: 219, Byrd: 15 },
+  1964: { Johnson: 486, Goldwater: 52 },
+  1968: { Nixon: 301, Humphrey: 191, Wallace: 46 },
+  1972: { Nixon: 520, McGovern: 17, Hospers: 1 },
+  1976: { Carter: 297, Ford: 240, Reagan: 1 },
+  1980: { Reagan: 489, Carter: 49 },
+  1984: { Reagan: 525, Mondale: 13 },
+  1988: { Bush: 426, Dukakis: 111, Bentsen: 1 },
+  1992: { Clinton: 370, Bush: 168 },
+  1996: { Clinton: 379, Dole: 159 },
+  2000: { Bush: 271, Gore: 266, abstain: 1 },
+  2004: { Bush: 286, Kerry: 251, Edwards: 1 },
+  2008: { Obama: 365, McCain: 173 },
+  2012: { Obama: 332, Romney: 206 },
+  2016: { Trump: 304, Clinton: 227, Powell: 3, Kasich: 1, Paul: 1, Sanders: 1, Eagle: 1 },
+  2020: { Biden: 306, Trump: 232 },
+  2024: { Trump: 312, Harris: 226 },
+};
+
 const years = [...dataset.elections.keys()];
 
 describe("golden data", () => {
@@ -62,6 +95,18 @@ describe("golden data", () => {
     const election = dataset.elections.get(year)!;
     expect(fullName(election.candidates, sim.actualWinner!)).toContain(WINNERS[year]);
     expect(sim.winner).toBe(sim.actualWinner);
+  });
+
+  it.each(years)("%i: national electoral votes cast match the official totals", (year) => {
+    const election = dataset.elections.get(year)!;
+    const totals: Record<string, number> = {};
+    for (const s of election.states.values()) {
+      for (const [id, n] of Object.entries(s.actual)) {
+        const name = id === "abstain" ? id : shortName(election.candidates, id);
+        totals[name] = (totals[name] ?? 0) + n;
+      }
+    }
+    expect(totals).toEqual(CAST[year]);
   });
 
   it("references only known candidates", () => {
@@ -94,6 +139,9 @@ describe("published spot checks", () => {
     const sim = simulate(dataset, 2024, { ...historical, rule: { kind: "cube-root" } });
     expect(sim.houseSize).toBe(692);
     expect(sim.totalElectoralVotes).toBe(795);
+    const trump = sim.winner!;
+    expect(sim.totals[trump]).toBe(462);
+    expect(sim.totalElectoralVotes - sim.totals[trump]!).toBe(333);
   });
 
   it("2000: Bush below 491 seats, Gore above 635 (Neubauer & Zeitlin)", () => {

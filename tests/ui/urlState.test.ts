@@ -49,6 +49,7 @@ describe("colors", () => {
   const cands = [
     { id: "a", name: "Joseph R. Biden Jr.", party: "D" },
     { id: "b", name: "Mystery Person", party: "Whig" },
+    { id: "c", name: "Robert M. La Follette", party: "Progressive" },
   ];
 
   it("maps parties and falls back by index", () => {
@@ -61,6 +62,8 @@ describe("colors", () => {
 
   it("formats names", () => {
     expect(shortName(cands, "a")).toBe("Biden");
+    expect(shortName(cands, "c")).toBe("La Follette");
+    expect(shortName([{ id: "x", name: "Cher", party: "R" }], "x")).toBe("Cher");
     expect(shortName(cands, "zzz")).toBe("zzz");
     expect(shortName(cands, null)).toBe("No majority");
     expect(fullName(cands, "b")).toBe("Mystery Person");

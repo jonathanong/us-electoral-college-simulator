@@ -24,12 +24,16 @@ export function candidateColor(candidates: readonly Candidate[], id: string | nu
   return partyColor(candidates[index]?.party, Math.max(index, 0));
 }
 
+const PARTICLES = new Set(["La", "Van", "De", "Du", "Von"]);
+
 /** Surname-ish short label, e.g. "Theodore Roosevelt" -> "Roosevelt". */
 export function shortName(candidates: readonly Candidate[], id: string | null): string {
   if (id === null) return "No majority";
   const name = candidates.find((c) => c.id === id)?.name ?? id;
   const words = name.replace(/,? (Jr\.?|Sr\.?|II|III)$/, "").split(" ");
-  return words.at(-1)!;
+  const last = words.at(-1)!;
+  const before = words.at(-2);
+  return before && PARTICLES.has(before) ? `${before} ${last}` : last;
 }
 
 export function fullName(candidates: readonly Candidate[], id: string): string {

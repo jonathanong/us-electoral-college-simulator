@@ -88,6 +88,10 @@ export function Overview({ data, rows, columns, selected, onSelect }: Props) {
           })}
         </tbody>
       </table>
+      <p class="note">
+        Electoral votes count faithless electors for the candidate they were pledged to (for example
+        Trump 306 in 2016, though 304 were cast).
+      </p>
     </div>
   );
 }

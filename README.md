@@ -3,7 +3,7 @@
 [![CI](https://github.com/jonathanong/us-electoral-college-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/jonathanong/us-electoral-college-simulator/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/jonathanong/us-electoral-college-simulator/graph/badge.svg)](https://codecov.io/gh/jonathanong/us-electoral-college-simulator)
 
-**Live site: https://jonathanong.github.io/us-electoral-college-simulator/**
+**Live site: https://jongleberry.com/us-electoral-college-simulator/**
 
 Each state's electoral votes equal its House seats plus two. The House stopped growing at 435 seats
 after the 1910 census ([Apportionment Act of 1911](https://en.wikipedia.org/wiki/Apportionment_Act_of_1911),
@@ -20,7 +20,7 @@ shows whether the winner changes.
   custom size after each census), an apportionment method (Huntington–Hill, Webster, Jefferson,
   Hamilton), and how split states are handled. A map shows winners or the change in electors.
 - **Flip finder:** every House size from 100 to 2,000 for one election, showing where the winner changes.
-- Shareable URLs, keyboard and screen-reader friendly, and works on phones.
+- Shareable URLs, and works on phones and desktops in light and dark mode.
 
 ## Method
 
