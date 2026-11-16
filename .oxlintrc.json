@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "import"],
+  "categories": { "correctness": "error", "suspicious": "warn" },
+  "rules": {
+    "eslint/max-lines": ["error", { "max": 200, "skipBlankLines": false, "skipComments": false }]
+  },
+  "ignorePatterns": ["dist", "coverage", "node_modules"]
+}
