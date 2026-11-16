@@ -22,6 +22,12 @@ describe("App", () => {
     expect(screen.getAllByRole("link", { name: /GitHub/ }).length).toBeGreaterThan(0);
   });
 
+  it("uses an explicit search string over the page URL", () => {
+    history.replaceState(null, "", "/?year=1992");
+    render(<App data={data} search="?year=1996" />);
+    expect(screen.getByRole("heading", { name: "Explore 1996" })).toBeTruthy();
+  });
+
   it("ignores unknown hashes", () => {
     history.replaceState(null, "", "/?year=1992#nope");
     render(<App data={data} />);

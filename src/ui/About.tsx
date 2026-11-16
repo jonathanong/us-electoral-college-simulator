@@ -58,11 +58,11 @@ export function About() {
     <section class="about" id="about">
       <h2>How this works</h2>
       <p>
-        Each state gets one electoral vote per House seat plus two for its senators. The House grew
-        after almost every census until the 1911 Apportionment Act set it at 433 (435 once Arizona
-        and New Mexico joined). After the 1920 census Congress never reapportioned, and the 1929 Act
-        made 435 permanent. Every election since 1912 has been run on a 435-seat House (437 in 1960,
-        after Alaska and Hawaii joined).
+        In the Electoral College, each state gets one elector per House seat plus two for its
+        senators. The House grew after almost every census until the 1911 Apportionment Act set it
+        at 433 (435 once Arizona and New Mexico joined). After the 1920 census Congress never
+        reapportioned, and the 1929 Act made 435 permanent. Every election since 1912 has been run
+        on a 435-seat House (437 in 1960, after Alaska and Hawaii joined).
       </p>
       <h3>House size rules</h3>
       <dl>

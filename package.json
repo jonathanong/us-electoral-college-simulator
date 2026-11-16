@@ -19,6 +19,7 @@
     "d3-geo": "^3.1.2",
     "polylabel": "2.1.0",
     "preact": "^11.2.0",
+    "preact-render-to-string": "6.8.3",
     "topojson-client": "^3.1.0",
     "us-atlas": "^3.0.1"
   },

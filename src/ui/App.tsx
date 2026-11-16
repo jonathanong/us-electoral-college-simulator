@@ -15,9 +15,10 @@ import { parseState, serializeState, type ViewState } from "./urlState.ts";
 const SWEEP_MIN = 100;
 const SWEEP_MAX = 2000;
 
-export function App({ data }: { data: Dataset }) {
+/** `search` overrides the page URL; the build passes "" to prerender the default view. */
+export function App({ data, search }: { data: Dataset; search?: string }) {
   const years = useMemo(() => [...data.elections.keys()], [data]);
-  const [view, setView] = useState<ViewState>(() => parseState(location.search, years));
+  const [view, setView] = useState<ViewState>(() => parseState(search ?? location.search, years));
   const [mapMode, setMapMode] = useState<MapMode>("winner");
   const { year, settings } = view;
 
@@ -69,8 +70,8 @@ export function App({ data }: { data: Dataset }) {
         <p class="kicker">The House has had 435 seats since 1913</p>
         <h1>What if the House had kept growing?</h1>
         <p class="dek">
-          Electoral votes come from House seats. Replay every presidential election since 1912 with
-          a bigger House and see whether the winner changes.
+          A state's Electoral College votes come from its House seats. Replay every presidential
+          election since 1912 with a bigger House and see whether the winner changes.
         </p>
         <nav>
           <a href="#answer">Answer</a> <a href="#explore">Explore</a>{" "}

@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   base: "/us-electoral-college-simulator/",
-  plugins: [preact()],
+  plugins: [preact({ prerender: { enabled: true, renderTarget: "#app" } })],
   test: {
     environment: "jsdom",
     include: ["tests/**/*.test.{ts,tsx}"],
