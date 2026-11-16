@@ -342,6 +342,7 @@ input[type="range"] {
 .map .label text {
   font: 600 13px var(--sans);
   text-anchor: middle;
+  dominant-baseline: central;
   fill: var(--ink);
   paint-order: stroke;
 }

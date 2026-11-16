@@ -1,4 +1,6 @@
 import { geoPath } from "d3-geo";
+import type { Feature, MultiPolygon, Polygon } from "geojson";
+import polylabel from "polylabel";
 import { feature, mesh } from "topojson-client";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import atlas from "us-atlas/states-albers-10m.json";
@@ -8,11 +10,24 @@ import { candidateColor, shortName } from "./colors.ts";
 
 const topology = atlas as unknown as Topology<{ states: GeometryCollection }>;
 const path = geoPath();
-const SHAPES = feature(topology, topology.objects.states).features.map((f) => ({
-  code: CODE_BY_FIPS.get(String(f.id))!,
-  d: path(f)!,
-  centroid: path.centroid(f),
-}));
+
+/**
+ * Label anchor: the point deepest inside the state's largest polygon, so numbers sit visually
+ * centred even in curved or multi-part states (Florida, Louisiana, Michigan, Hawaii).
+ */
+export function labelPoint(f: Feature<Polygon | MultiPolygon>): [number, number] {
+  const polygons =
+    f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+  const largest = polygons.reduce((best, rings) =>
+    path.area({ type: "Polygon", coordinates: rings }) >
+    path.area({ type: "Polygon", coordinates: best })
+      ? rings
+      : best,
+  );
+  const [x, y] = polylabel(largest as [number, number][][], 0.5);
+  return [x, y];
+}
+
 const BORDERS = path(mesh(topology, topology.objects.states, (a, b) => a !== b))!;
 
 /** Hand-placed label offsets for states too small to hold a number. */
@@ -27,6 +42,17 @@ const CALLOUTS: Readonly<Record<string, readonly [number, number]>> = {
   MD: [55, 25],
   DC: [50, 45],
 };
+
+const SHAPES = feature(topology, topology.objects.states).features.map((f) => {
+  const code = CODE_BY_FIPS.get(String(f.id))!;
+  return {
+    code,
+    d: path(f)!,
+    // Callout offsets are tuned from the centroid, so keep it for those small states.
+    centroid:
+      code in CALLOUTS ? path.centroid(f) : labelPoint(f as Feature<Polygon | MultiPolygon>),
+  };
+});
 
 export type MapMode = "winner" | "change";
 
@@ -76,7 +102,7 @@ export function UsMap({ sim, candidates, mode }: Props) {
         return (
           <g key={code} class={mode === "winner" ? "label on-fill" : "label"} aria-hidden="true">
             {(dx !== 0 || dy !== 0) && (
-              <line x1={centroid[0]} y1={centroid[1]} x2={x - 8} y2={y - 4} class="callout" />
+              <line x1={centroid[0]} y1={centroid[1]} x2={x - 4} y2={y} class="callout" />
             )}
             <text x={x} y={y} class={dx !== 0 || dy !== 0 ? "outside" : undefined}>
               {text}
