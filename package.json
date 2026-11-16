@@ -8,12 +8,12 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "test": "vitest run --coverage",
-    "data": "node scripts/build-data.ts"
+    "data:validate": "node scripts/validate.ts && node scripts/validate-hh.ts"
   },
   "dependencies": {
     "d3-geo": "^3.1.2",

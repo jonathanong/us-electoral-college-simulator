@@ -25,6 +25,9 @@ shows whether the winner changes.
 ## Method
 
 - Seats are apportioned from each census's apportionment population, with every state guaranteed one seat.
+  Exact apportionment populations are published for 1990–2020; for 1910–1980 they are reconstructed from
+  the Census Bureau's seats and average district size (see [`data/SOURCES.md`](data/SOURCES.md)).
+  Huntington–Hill reproduces every real apportionment from 1940 to 2020.
   Counterfactual Houses are also reapportioned after the 1920 census, which was skipped in reality.
 - Electoral votes = seats + 2. From 1964, DC gets as many electors as it would as a state, capped at the
   smallest state ([23rd Amendment](https://en.wikipedia.org/wiki/Twenty-third_Amendment_to_the_United_States_Constitution)).
