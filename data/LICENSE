@@ -1,0 +1,17 @@
+The files in this directory (data/) are licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International license (CC BY-SA 4.0).
+
+Some of the data derives from Wikipedia, whose text is available under CC BY-SA 4.0, so the data
+directory as a whole is distributed under the same license. Portions derived from U.S. government
+sources (Census Bureau, National Archives) are in the public domain, and portions derived from the
+MIT Election Data + Science Lab are CC0 1.0; see SOURCES.md for per-file attribution.
+
+You are free to share and adapt this material for any purpose, even commercially, provided that you
+give appropriate credit, link to the license, indicate if changes were made, and distribute your
+contributions under the same license.
+
+Full legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by-sa/4.0/
+
+Source attribution: Wikipedia contributors, "YEAR United States presidential election" articles
+(https://en.wikipedia.org), retrieved 2026-11-15.
