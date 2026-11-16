@@ -3,23 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Uncapped House</title>
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%238a3b12'/%3E%3Cpath d='M6 24h20M8 24V13m5 11V13m6 11V13m5 11V13M5 12l11-6 11 6z' stroke='%23fff' stroke-width='2' fill='none'/%3E%3C/svg%3E"
+    <title>What If the House Kept Growing? Electoral College Simulator</title>
+    <meta
+      name="description"
+      content="Replay every U.S. presidential election from 1912 to 2024 with a bigger House of Representatives. Compare the 435-seat cap with the cube root and Wyoming rules."
     />
+    <link rel="canonical" href="https://jongleberry.com/us-electoral-college-simulator/" />
+    <link rel="icon" href="/us-electoral-college-simulator/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/us-electoral-college-simulator/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#15140f" media="(prefers-color-scheme: dark)" />
+    <meta name="author" content="Jonathan Ong" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Jongleberry" />
+    <meta property="og:url" content="https://jongleberry.com/us-electoral-college-simulator/" />
     <meta property="og:title" content="What if the House had kept growing?" />
     <meta
       property="og:description"
-      content="Replay every U.S. presidential election since 1912 with a bigger House of Representatives."
+      content="Electoral votes come from House seats. Replay every presidential election since 1912 with a bigger House and see whether the winner changes."
     />
     <meta
-      name="description"
-      content="What if the U.S. House had kept growing past 435 seats? Replay every presidential election since 1912."
+      property="og:image"
+      content="https://jongleberry.com/us-electoral-college-simulator/og.png"
     />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Map of the 2024 election under a 692-seat cube-root House: Trump 462, Harris 333."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@jongleberry" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Uncapped House: Electoral College Simulator",
+        "alternateName": "What if the House had kept growing?",
+        "url": "https://jongleberry.com/us-electoral-college-simulator/",
+        "description": "Replay every U.S. presidential election from 1912 to 2024 under a different House of Representatives size, apportionment method, and House size rule such as the cube root rule or the Wyoming rule.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "inLanguage": "en",
+        "keywords": "electoral college, House of Representatives, apportionment, 435 seats, cube root rule, Wyoming rule, Reapportionment Act of 1929, presidential elections",
+        "author": { "@type": "Person", "name": "Jonathan Ong", "url": "https://jongleberry.com/" },
+        "license": "https://opensource.org/license/mit",
+        "sameAs": "https://github.com/jonathanong/us-electoral-college-simulator"
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script prerender type="module" src="/src/main.tsx"></script>
   </body>
 </html>
