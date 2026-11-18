@@ -1,14 +1,9 @@
-import { allocate } from "./allocate.ts";
 import { apportion, seatSequence } from "./apportion.ts";
-import {
-  electoralVotesFor,
-  getElection,
-  statePopulations,
-  sumVotes,
-  winnerOf,
-} from "./simulate.ts";
 import { censusFor } from "./house.ts";
-import type { Allocation, Dataset, Method, StateCode, Votes } from "./types.ts";
+import { bonusFor, decide, nationalPopular, sumVotes, transfersFor } from "./national.ts";
+import { electoralVotesFor, getElection, statePopulations } from "./simulate.ts";
+import { allocateState } from "./systems.ts";
+import type { Dataset, Settings, StateCode, Votes } from "./types.ts";
 
 export interface SweepPoint {
   size: number;
@@ -17,9 +12,7 @@ export interface SweepPoint {
   winner: string | null;
 }
 
-export interface SweepOptions {
-  method: Method;
-  allocation: Allocation;
+export interface SweepOptions extends Omit<Settings, "rule"> {
   minSize: number;
   maxSize: number;
 }
@@ -31,13 +24,18 @@ export function sweep(data: Dataset, year: number, options: SweepOptions): Sweep
   const pops = statePopulations(data, election, census);
   const minSize = Math.max(options.minSize, pops.size);
   const results = election.states;
+  const settings: Settings = { ...options, rule: { kind: "fixed", size: 0 } };
+  const popular = nationalPopular(election);
+  const transfers = transfersFor(year, popular, settings);
+  const bonus = bonusFor(settings, popular);
 
   const pointFor = (size: number, seats: ReadonlyMap<StateCode, number>): SweepPoint => {
     const ev = electoralVotesFor(data, election, census, seats, pops, false);
-    const rows = [...ev].map(([s, n]) => allocate(results.get(s)!, n, options.allocation));
-    const totals = sumVotes(rows);
-    const total = [...ev.values()].reduce((a, b) => a + b, 0);
-    return { size, totals, totalElectoralVotes: total, winner: winnerOf(totals, total) };
+    const rows = [...ev].map(([s, n]) => allocateState(results.get(s)!, n, settings, transfers));
+    const totals = sumVotes([...rows, bonus]);
+    const total = Object.values(totals).reduce((a, b) => a + b, 0);
+    const { winner } = decide(settings, totals, total, popular);
+    return { size, totals, totalElectoralVotes: total, winner };
   };
 
   const points: SweepPoint[] = [];

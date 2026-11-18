@@ -39,6 +39,18 @@ describe("parseState", () => {
   });
 });
 
+describe("voting system state", () => {
+  it("reads the system and clamps ranked-choice percentages", () => {
+    const s = parseState(
+      "?system=ranked-choice&rcv=1992.perot:150,bad,1992.x:abc,19.y:5,1992.z:,2000.nader:-4",
+      years,
+    ).settings;
+    expect(s.system).toBe("ranked-choice");
+    expect(s.transfers).toEqual({ "1992.perot": 100, "2000.nader": 0 });
+    expect(parseState("?system=nope", years).settings.system).toBe("winner-take-all");
+  });
+});
+
 describe("serializeState", () => {
   it("round-trips", () => {
     for (const q of [
@@ -46,6 +58,7 @@ describe("serializeState", () => {
       "?year=2024&rule=ratio&perRep=40000",
       "?year=2024&rule=custom&sizes=1910%3A500%2C2020%3A900",
       "?year=2024&rule=cube-root",
+      "?year=2024&rule=cube-root&system=ranked-choice&rcv=1992.perot%3A60%2C2000.nader%3A70",
     ]) {
       expect(serializeState(parseState(q, years))).toBe(q);
     }

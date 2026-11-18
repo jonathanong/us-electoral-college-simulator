@@ -1,6 +1,7 @@
 import { stateName } from "../data/states.ts";
 import type { Candidate, Simulation } from "../engine/types.ts";
 import { candidateColor, shortName } from "./colors.ts";
+import { formatEv } from "./systems.ts";
 
 interface Props {
   sim: Simulation;
@@ -40,7 +41,7 @@ export function StateTable({ sim, candidates }: Props) {
                     .map(([id, n]) => (
                       <span key={id} class="alloc">
                         <b class="swatch" style={{ background: candidateColor(candidates, id) }} />
-                        {shortName(candidates, id)} {n}
+                        {shortName(candidates, id)} {formatEv(n)}
                       </span>
                     ))}
                 </td>

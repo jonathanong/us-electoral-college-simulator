@@ -1,3 +1,6 @@
+import { Fragment } from "preact";
+import { SYSTEM_INFO } from "./systems.ts";
+
 export const REPO_URL = "https://github.com/jonathanong/us-electoral-college-simulator";
 
 export const REFERENCES: readonly { href: string; title: string; note: string }[] = [
@@ -78,6 +81,26 @@ export function About() {
         <dt>Fixed / custom</dt>
         <dd>Pick one size, or a size after each census.</dd>
       </dl>
+      <h3>Voting methods</h3>
+      <dl class="methods">
+        {Object.entries(SYSTEM_INFO).map(([id, info]) => (
+          <div key={id}>
+            <dt>{info.label}</dt>
+            <dd>
+              {info.summary}
+              {info.refs.map((r) => (
+                <Fragment key={r.href}>
+                  {" "}
+                  <a href={r.href} rel="noopener">
+                    {r.text}
+                  </a>
+                  .
+                </Fragment>
+              ))}
+            </dd>
+          </div>
+        ))}
+      </dl>
       <h3>Assumptions</h3>
       <ul>
         <li>
@@ -97,6 +120,16 @@ export function About() {
           Faithless electors are returned to the candidate they were pledged to. Historically split
           delegations (e.g. California 1912, Alabama 1960) are scaled proportionally, or given to
           the popular-vote winner if you choose that option.
+        </li>
+        <li>
+          Popular votes cover every candidate with at least 1% nationally. Everyone else in a state
+          is grouped as “Others”, from the state's total vote, and can win proportional electors
+          (for example Utah 2016, where McMullin took 21%).
+        </li>
+        <li>
+          Ranked choice: each eliminated candidate's voters are split between the two national
+          front-runners by the sliders. Front-runners' own voters, and votes meant for someone
+          already out, split evenly among those left.
         </li>
         <li>
           DC (from 1964) gets as many electors as it would as a state, capped at the smallest state.

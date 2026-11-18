@@ -19,6 +19,13 @@ shows whether the winner changes.
 - **Explore an election:** pick a year and a House size rule (fixed size, people per seat, or a
   custom size after each census), an apportionment method (Huntington–Hill, Webster, Jefferson,
   Hamilton), and how split states are handled. A map shows winners or the change in electors.
+- **What if we voted differently?** Every election under real proposals to change how electors are
+  awarded: a national popular vote (the National Popular Vote compact and the 1969 Bayh–Celler
+  amendment), proportional electors (Colorado Amendment 36, 2004), fractional electors (the 1950
+  Lodge–Gossett amendment), the statewide winner plus proportional House electors (an estimate of the
+  Maine/Nebraska district method everywhere, and Pennsylvania SB 538, 2013), the National Bonus Plan
+  (1978), and ranked choice in each state (Maine since 2020), with sliders for where eliminated
+  candidates' voters go. Sources for each rule are on the page.
 - **Flip finder:** every House size from 100 to 2,000 for one election, showing where the winner changes.
 - Shareable URLs, and works on phones and desktops in light and dark mode.
 
@@ -36,6 +43,8 @@ shows whether the winner changes.
 - **Maine (1972+) and Nebraska (1992+):** two electors go to the statewide winner, and district
   electors are scaled from the real district split. This is a best-effort estimate, since more
   districts would be drawn differently.
+- Voting methods use state popular votes. Candidates under 1% nationally are grouped per state as
+  "Others" (from each state's total vote) and can win proportional electors.
 - If nobody wins a majority, the site reports that the House would choose (one vote per state delegation).
 
 ## Data

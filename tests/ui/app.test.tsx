@@ -77,6 +77,28 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: "Winner & electors" }));
   });
 
+  it("switches voting methods, with ranked-choice sliders and no House for a popular vote", () => {
+    history.replaceState(null, "", "/?year=1992&rule=historical");
+    render(<App data={data} />);
+    expect(screen.getByRole("heading", { name: "What if we voted differently?" })).toBeTruthy();
+    change(select("Voting method"), "ranked-choice");
+    const slider = screen.getByLabelText("Share of Others voters ranking Dee next");
+    fireEvent.input(slider, { target: { value: "80" } });
+    expect(location.search).toContain("system=ranked-choice");
+    expect(location.search).toContain("rcv=1992.other%3A80");
+    expect(screen.getByText(/Others voters: Dee/)).toBeTruthy();
+    change(select("Voting method"), "national");
+    expect(screen.queryByLabelText("House size")).toBeNull();
+    expect(screen.queryByLabelText("Split states")).toBeNull();
+    expect(document.getElementById("flips")).toBeNull();
+    expect(screen.getByText(/House size doesn.t matter/)).toBeTruthy();
+    change(select("Voting method"), "fractional");
+    expect(screen.getByText(/most wins/)).toBeTruthy();
+    change(select("Voting method"), "bonus");
+    expect(screen.getByText(/including 102 bonus for Dee/)).toBeTruthy();
+    expect(screen.getByLabelText("Split states")).toBeTruthy();
+  });
+
   it("selects a year from the overview table and lists states", () => {
     history.replaceState(null, "", "/?year=1996&rule=fixed&size=200");
     render(<App data={data} />);

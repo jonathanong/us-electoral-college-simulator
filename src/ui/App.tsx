@@ -5,7 +5,16 @@ import type { Dataset } from "../engine/types.ts";
 import { About, REPO_URL } from "./About.tsx";
 import { Controls, ruleLabel } from "./Controls.tsx";
 import { FlipChart } from "./FlipChart.tsx";
-import { type Column, Overview, PRESET_COLUMNS, flippedYears, overviewRows } from "./Overview.tsx";
+import { MethodControls } from "./MethodControls.tsx";
+import {
+  METHOD_COLUMNS,
+  Overview,
+  PRESET_COLUMNS,
+  type RuleColumn,
+  flippedYears,
+  methodRows,
+  overviewRows,
+} from "./Overview.tsx";
 import { ResultBar } from "./ResultBar.tsx";
 import { StateTable } from "./StateTable.tsx";
 import { Summary } from "./Summary.tsx";
@@ -30,29 +39,30 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
     history.replaceState(null, "", serializeState(view) + location.hash);
   }, [view]);
 
-  const columns = useMemo<Column[]>(() => {
+  const columns = useMemo<RuleColumn[]>(() => {
     const preset = PRESET_COLUMNS.some((c) => c.key === settings.rule.kind);
     return preset
       ? [...PRESET_COLUMNS]
       : [...PRESET_COLUMNS, { key: "yours", label: ruleLabel(settings.rule), rule: settings.rule }];
   }, [settings.rule]);
   const rows = useMemo(() => overviewRows(data, settings, columns), [data, settings, columns]);
+  const byMethod = useMemo(() => methodRows(data, settings), [data, settings.transfers]);
 
   const election = data.elections.get(year)!;
   const sim = useMemo(() => simulate(data, year, settings), [data, year, settings]);
+  // What actually happened: the real House under today's winner-take-all system.
   const real = useMemo(
-    () => simulate(data, year, { ...settings, rule: { kind: "historical" } }),
+    () =>
+      simulate(data, year, {
+        ...settings,
+        rule: { kind: "historical" },
+        system: "winner-take-all",
+      }),
     [data, year, settings],
   );
   const points = useMemo(
-    () =>
-      sweep(data, year, {
-        method: settings.method,
-        allocation: settings.allocation,
-        minSize: SWEEP_MIN,
-        maxSize: SWEEP_MAX,
-      }),
-    [data, year, settings.method, settings.allocation],
+    () => sweep(data, year, { ...settings, minSize: SWEEP_MIN, maxSize: SWEEP_MAX }),
+    [data, year, settings],
   );
   const marks = [{ size: 435, label: "435" }];
   if (sim.houseSize !== 435 && sim.houseSize >= SWEEP_MIN && sim.houseSize <= SWEEP_MAX) {
@@ -74,8 +84,9 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
           election since 1912 with a bigger House and see whether the winner changes.
         </p>
         <nav>
-          <a href="#answer">Answer</a> <a href="#explore">Explore</a>{" "}
-          <a href="#flips">Flip finder</a> <a href="#about">Method</a>{" "}
+          <a href="#answer">Answer</a> <a href="#methods">Voting methods</a>{" "}
+          <a href="#explore">Explore</a> <a href="#flips">Flip finder</a>{" "}
+          <a href="#about">Method</a>{" "}
           <a href={REPO_URL} class="gh">
             GitHub
           </a>
@@ -97,6 +108,26 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
             onSelect={selectYear}
           />
         </section>
+        <section id="methods">
+          <h2>What if we voted differently?</h2>
+          <p>
+            Every election under real proposals to change how electors are awarded, with the real
+            House. Pick one under Explore to see its map and sources.
+          </p>
+          <Summary
+            data={data}
+            columns={METHOD_COLUMNS}
+            flips={METHOD_COLUMNS.map((_, i) => flippedYears(byMethod, i))}
+          />
+          <Overview
+            data={data}
+            rows={byMethod}
+            columns={METHOD_COLUMNS}
+            selected={year}
+            onSelect={selectYear}
+            note={false}
+          />
+        </section>
         <section id="explore">
           <h2>Explore {year}</h2>
           <Controls
@@ -104,6 +135,11 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
             year={year}
             settings={settings}
             onYear={(y) => setView({ ...view, year: y })}
+            onSettings={(s) => setView({ ...view, settings: s })}
+          />
+          <MethodControls
+            election={election}
+            settings={settings}
             onSettings={(s) => setView({ ...view, settings: s })}
           />
           <ResultBar sim={sim} actual={real} candidates={election.candidates} />
@@ -128,19 +164,21 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
           <UsMap sim={sim} candidates={election.candidates} mode={mapMode} />
           <StateTable sim={sim} candidates={election.candidates} />
         </section>
-        <section id="flips">
-          <h2>Flip finder: {year}</h2>
-          <p>
-            Every House size from {SWEEP_MIN} to {SWEEP_MAX}, using the apportionment method and
-            split-state option above.
-          </p>
-          <FlipChart
-            points={points}
-            candidates={election.candidates}
-            focus={real.winner}
-            marks={marks}
-          />
-        </section>
+        {settings.system !== "national" && (
+          <section id="flips">
+            <h2>Flip finder: {year}</h2>
+            <p>
+              Every House size from {SWEEP_MIN} to {SWEEP_MAX}, using the voting method,
+              apportionment method and split-state option above.
+            </p>
+            <FlipChart
+              points={points}
+              candidates={election.candidates}
+              focus={real.winner}
+              marks={marks}
+            />
+          </section>
+        )}
         <About />
       </main>
       <footer>
