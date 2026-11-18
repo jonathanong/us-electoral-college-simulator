@@ -17,7 +17,10 @@ export function HouseSizePage({ data, settings, href }: PageProps) {
       ? [...PRESET_COLUMNS]
       : [...PRESET_COLUMNS, { key: "yours", label: ruleLabel(settings.rule), rule: settings.rule }];
   }, [settings.rule]);
-  const rows = useMemo(() => overviewRows(data, settings, columns), [data, settings, columns]);
+  const rows = useMemo(
+    () => overviewRows(data, { ...settings, system: "winner-take-all" }, columns),
+    [data, settings, columns],
+  );
   return (
     <>
       <div class="page-head">
