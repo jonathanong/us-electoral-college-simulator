@@ -153,6 +153,21 @@ describe("pages", () => {
     expect(screen.getByRole("link", { name: "← 1992" })).toBeTruthy();
   });
 
+  it("asks only for the census an election used", () => {
+    open("/elections/1996/?rule=custom");
+    expect(screen.getByText("Seats after the 1990 census")).toBeTruthy();
+    expect(screen.queryByLabelText("2000")).toBeNull();
+    change(screen.getByLabelText("1990"), "200");
+    expect(location.search).toContain("1990%3A200");
+    expect(screen.getByText(/1996 used the 1990 census/)).toBeTruthy();
+    fireEvent.click(
+      within(document.querySelector(".census-sizes")!).getByRole("link", { name: "All elections" }),
+    );
+    expect(location.pathname).toBe("/");
+    expect(screen.getByText("Seats after each census")).toBeTruthy();
+    expect(screen.getByLabelText("2000")).toBeTruthy();
+  });
+
   it("compares House sizes, including your own", () => {
     open("/house-size/?rule=fixed&size=200");
     expect(h1()).toBe("What if the House had kept growing?");
