@@ -1,33 +1,20 @@
-import { OTHER, frontRunners, nationalPopular } from "../engine/national.ts";
-import { EVEN_SPLIT } from "../engine/rcv.ts";
 import type { Election, Settings, VotingSystem } from "../engine/types.ts";
-import { shortName } from "./colors.ts";
 import { SYSTEM_INFO } from "./systems.ts";
+import { TransferSliders } from "./Transfers.tsx";
 
 interface Props {
-  election: Election;
+  /** The election whose ranked-choice sliders to show; the all-elections grid shows them per row. */
+  election?: Election;
   settings: Settings;
   onSettings: (settings: Settings) => void;
 }
 
-/** Candidates whose voters' next choices matter: everyone but the two national front-runners. */
-export function transferCandidates(election: Election): string[] {
-  const popular = nationalPopular(election);
-  const [first, second] = frontRunners(popular);
-  return Object.keys(popular)
-    .filter((id) => id !== first && id !== second)
-    .toSorted((a, b) => (a === OTHER ? 1 : b === OTHER ? -1 : popular[b]! - popular[a]!));
-}
-
 export function MethodControls({ election, settings, onSettings }: Props) {
-  const { candidates, year } = election;
-  const popular = nationalPopular(election);
-  const [first, second] = frontRunners(popular);
-  const name = (id: string) => shortName(candidates, id);
+  const rcv = settings.system === "ranked-choice";
   return (
-    <div class="controls method-controls">
-      <label class="wide">
-        Voting method
+    <div class="field-group">
+      <label class="field">
+        <span class="field-label">Voting method</span>
         <select
           value={settings.system}
           onChange={(e) =>
@@ -44,38 +31,15 @@ export function MethodControls({ election, settings, onSettings }: Props) {
           ))}
         </select>
       </label>
-      <p class="method-summary">{SYSTEM_INFO[settings.system].summary}</p>
-      {settings.system === "ranked-choice" && (
-        <fieldset class="transfers">
-          <legend>Where eliminated candidates' voters go next</legend>
-          {transferCandidates(election).map((id) => {
-            const key = `${year}.${id}`;
-            const pct = settings.transfers[key] ?? EVEN_SPLIT * 100;
-            return (
-              <label key={key} class="wide">
-                {name(id)} voters: {name(first)} <output>{pct}%</output> · {name(second)}{" "}
-                <output>{100 - pct}%</output>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  step={5}
-                  value={pct}
-                  aria-label={`Share of ${name(id)} voters ranking ${name(first)} next`}
-                  onInput={(e) =>
-                    onSettings({
-                      ...settings,
-                      transfers: {
-                        ...settings.transfers,
-                        [key]: Number((e.currentTarget as HTMLInputElement).value),
-                      },
-                    })
-                  }
-                />
-              </label>
-            );
-          })}
+      <p class="field-hint">{SYSTEM_INFO[settings.system].summary}</p>
+      {rcv && election && (
+        <fieldset class="field">
+          <legend class="field-label">Where eliminated candidates' voters go next</legend>
+          <TransferSliders election={election} settings={settings} onSettings={onSettings} />
         </fieldset>
+      )}
+      {rcv && !election && (
+        <p class="field-hint">Set where third-party voters go in each election's row.</p>
       )}
     </div>
   );

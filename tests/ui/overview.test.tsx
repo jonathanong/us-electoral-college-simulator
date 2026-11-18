@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/preact";
+import { render, screen } from "@testing-library/preact";
 import { describe, expect, it } from "vitest";
 import type { Simulation } from "../../src/engine/types.ts";
 import { Overview, flippedYears, methodRows } from "../../src/ui/Overview.tsx";
@@ -34,20 +34,19 @@ describe("Overview", () => {
       { key: "a", label: "Real", rule: { kind: "historical" as const } },
       { key: "b", label: "Odd", rule: { kind: "wyoming" as const } },
     ];
-    let picked = 0;
     render(
       <Overview
         data={data}
         rows={[{ year: 2000, sims: [sim({}), sim({ winner: null })] }]}
         columns={columns}
-        selected={1900}
-        onSelect={(y) => (picked = y)}
+        hrefFor={(y) => `/elections/${y}/`}
       />,
     );
     expect(screen.getByText("changed")).toBeTruthy();
     expect(screen.getByText("No majority").closest("td")!.textContent).toBe("No majority changed");
-    fireEvent.click(screen.getByRole("button", { name: "2000" }));
-    expect(picked).toBe(2000);
+    expect(screen.getByRole("link", { name: "2000" }).getAttribute("href")).toBe(
+      "/elections/2000/",
+    );
     const rows = [{ year: 2000, sims: [sim({}), sim({ winner: null })] }];
     expect(flippedYears(rows, 1)).toEqual([2000]);
     expect(flippedYears(rows, 0)).toEqual([]);
@@ -64,8 +63,7 @@ describe("Overview", () => {
         data={data}
         rows={[{ year: 2000, sims: [sim({}), sim({})] }]}
         columns={columns}
-        selected={2000}
-        onSelect={() => {}}
+        hrefFor={() => ""}
       />,
     );
     const names = [...container.querySelectorAll("td .who")].map((el) => el.className);
@@ -108,8 +106,7 @@ describe("methodRows and method cells", () => {
           },
         ]}
         columns={columns}
-        selected={2000}
-        onSelect={() => {}}
+        hrefFor={() => ""}
         note={false}
       />,
     );

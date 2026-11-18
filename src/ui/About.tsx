@@ -1,6 +1,3 @@
-import { Fragment } from "preact";
-import { SYSTEM_INFO } from "./systems.ts";
-
 export const REPO_URL = "https://github.com/jonathanong/us-electoral-college-simulator";
 
 export const REFERENCES: readonly { href: string; title: string; note: string }[] = [
@@ -56,52 +53,17 @@ export const REFERENCES: readonly { href: string; title: string; note: string }[
   },
 ];
 
-export function About() {
+export function AboutPage() {
   return (
-    <section class="about" id="about">
-      <h2>How this works</h2>
-      <p>
-        In the Electoral College, each state gets one elector per House seat plus two for its
-        senators. The House grew after almost every census until the 1911 Apportionment Act set it
-        at 433 (435 once Arizona and New Mexico joined). After the 1920 census Congress never
-        reapportioned, and the 1929 Act made 435 permanent. Every election since 1912 has been run
-        on a 435-seat House (437 in 1960, after Alaska and Hawaii joined).
-      </p>
-      <h3>House size rules</h3>
-      <dl>
-        <dt>Cube root rule</dt>
-        <dd>
-          House size ≈ the cube root of the population, the pattern most national legislatures
-          follow (692 seats after 2020).
-        </dd>
-        <dt>Wyoming rule</dt>
-        <dd>Every district is about the size of the least populous state.</dd>
-        <dt>People per representative</dt>
-        <dd>A fixed ratio, like the Constitution's original floor of 30,000.</dd>
-        <dt>Fixed / custom</dt>
-        <dd>Pick one size, or a size after each census.</dd>
-      </dl>
-      <h3>Voting methods</h3>
-      <dl class="methods">
-        {Object.entries(SYSTEM_INFO).map(([id, info]) => (
-          <div key={id}>
-            <dt>{info.label}</dt>
-            <dd>
-              {info.summary}
-              {info.refs.map((r) => (
-                <Fragment key={r.href}>
-                  {" "}
-                  <a href={r.href} rel="noopener">
-                    {r.text}
-                  </a>
-                  .
-                </Fragment>
-              ))}
-            </dd>
-          </div>
-        ))}
-      </dl>
-      <h3>Assumptions</h3>
+    <article class="prose">
+      <div class="page-head">
+        <h1>How it works</h1>
+        <p class="lead">
+          Each state gets one elector per House seat plus two for its senators, so the size of the
+          House and the way states award electors both shape who wins.
+        </p>
+      </div>
+      <h2>Assumptions</h2>
       <ul>
         <li>
           Votes are held fixed: everyone votes exactly as they did. Real campaigns would adapt.
@@ -139,7 +101,7 @@ export function About() {
           site doesn't simulate that vote.
         </li>
       </ul>
-      <h3>References</h3>
+      <h2>References</h2>
       <ul class="refs">
         {REFERENCES.map((r) => (
           <li key={r.href}>
@@ -155,6 +117,6 @@ export function About() {
         <a href={`${REPO_URL}/blob/main/data/SOURCES.md`}>data/SOURCES.md</a>. The code is MIT
         licensed and open source on <a href={REPO_URL}>GitHub</a>.
       </p>
-    </section>
+    </article>
   );
 }
