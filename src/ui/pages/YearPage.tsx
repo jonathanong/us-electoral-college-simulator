@@ -90,7 +90,7 @@ export function YearPage({
                 ))}
               </div>
             </div>
-            <UsMap sim={sim} candidates={election.candidates} mode={mapMode} />
+            <UsMap sim={sim} actual={real} candidates={election.candidates} mode={mapMode} />
             <StateTable sim={sim} candidates={election.candidates} />
           </div>
           {!national && (
