@@ -17,7 +17,7 @@ export function StateTable({ sim, candidates }: Props) {
       <summary>
         All {stateCount} states{hasDc ? " and DC" : ""}: seats and electoral votes
       </summary>
-      <div class="overview-wrap">
+      <div class="table-card table-scroll">
         <table class="overview">
           <thead>
             <tr>

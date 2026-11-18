@@ -63,10 +63,10 @@ interface Props {
 }
 
 function changeColor(delta: number): string {
-  if (delta === 0) return "var(--surface-2)";
+  if (delta === 0) return "var(--muted)";
   const t = Math.min(1, Math.abs(delta) / 20);
   const tone = delta > 0 ? "var(--grow)" : "var(--shrink)";
-  return `color-mix(in oklab, ${tone} ${Math.round(25 + 75 * t)}%, var(--surface-2))`;
+  return `color-mix(in oklab, ${tone} ${Math.round(25 + 75 * t)}%, var(--muted))`;
 }
 
 export function UsMap({ sim, candidates, mode }: Props) {
@@ -77,7 +77,7 @@ export function UsMap({ sim, candidates, mode }: Props) {
         const s = byCode.get(code);
         const delta = s ? s.electoralVotes - s.actualElectoralVotes : 0;
         const fill = !s
-          ? "var(--surface-2)"
+          ? "var(--muted)"
           : mode === "winner"
             ? candidateColor(candidates, s.winner)
             : changeColor(delta);
