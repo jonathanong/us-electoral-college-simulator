@@ -65,6 +65,7 @@ export function YearPage({
             years={years}
             year={year}
             onYear={(y) => go({ page: "year", year: y })}
+            homeHref={href({ page: "home" })}
             settings={settings}
             onSettings={onSettings}
           />

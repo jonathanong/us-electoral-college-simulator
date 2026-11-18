@@ -1,3 +1,5 @@
+import { censusFor } from "../engine/house.ts";
+import { CensusSizes } from "./CensusSizes.tsx";
 import type { Allocation, HouseRule, Method, Settings } from "../engine/types.ts";
 
 export const RULE_LABELS: Readonly<Record<HouseRule["kind"], string>> = {
@@ -22,8 +24,6 @@ const METHOD_LABELS: Readonly<Record<Method, string>> = {
   hamilton: "Hamilton",
 };
 
-const CENSUSES = [1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
-
 function defaultRule(kind: HouseRule["kind"], current: HouseRule): HouseRule {
   switch (kind) {
     case "fixed":
@@ -42,13 +42,15 @@ interface Props {
   years?: readonly number[];
   year?: number;
   onYear?: (year: number) => void;
+  /** Link to the all-elections grid, where every census size can be set. */
+  homeHref?: string;
   settings: Settings;
   onSettings: (settings: Settings) => void;
 }
 
 const num = (e: Event) => Number((e.currentTarget as HTMLInputElement).value);
 
-export function Controls({ years, year, settings, onYear, onSettings }: Props) {
+export function Controls({ years, year, onYear, homeHref, settings, onSettings }: Props) {
   const { rule, system } = settings;
   // A national popular vote ignores the House; only winner-take-all plans use the elector split.
   const house = system !== "national";
@@ -155,28 +157,15 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
         </label>
       )}
       {house && rule.kind === "custom" && (
-        <fieldset class="field census-sizes">
-          <legend class="field-label">Seats after each census (blank = 435)</legend>
-          {CENSUSES.map((census) => (
-            <label key={census}>
-              {census}
-              <input
-                type="number"
-                min={48}
-                max={5000}
-                placeholder="435"
-                value={rule.sizes[census] ?? ""}
-                onChange={(e) => {
-                  const sizes: Record<number, number> = { ...rule.sizes };
-                  const n = num(e);
-                  if (n >= 48) sizes[census] = Math.min(5000, Math.round(n));
-                  else delete sizes[census];
-                  setRule({ kind: "custom", sizes });
-                }}
-              />
-            </label>
-          ))}
-        </fieldset>
+        <CensusSizes
+          rule={rule}
+          onRule={setRule}
+          only={
+            year && homeHref
+              ? { census: censusFor(year, rule), year, allHref: homeHref }
+              : undefined
+          }
+        />
       )}
     </form>
   );
