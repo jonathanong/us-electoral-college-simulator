@@ -22,7 +22,7 @@ export const SYSTEM_INFO: Readonly<Record<VotingSystem, SystemInfo>> = {
     label: "National popular vote",
     short: "Popular vote",
     summary:
-      "The most votes nationwide wins. The National Popular Vote Interstate Compact does this once states with 270 electoral votes join (19 states and DC with 222 so far). The Bayh–Celler amendment (1969) would have done it directly; it passed the House 339–70 and died in a Senate filibuster. Its 40% runoff threshold was never needed: every winner since 1912 had more.",
+      "The most votes nationwide wins. The National Popular Vote Interstate Compact does this once states with 270 electoral votes join (18 states and DC with 222 so far). The Bayh–Celler amendment (1969) would have done it directly; it passed the House 339–70 and died in a Senate filibuster. Its 40% runoff threshold was never needed: every winner since 1912 had more.",
     refs: [
       {
         text: "National Popular Vote: state status",
