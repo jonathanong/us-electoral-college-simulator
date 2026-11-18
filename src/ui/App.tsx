@@ -46,13 +46,21 @@ export function App({ data, url }: { data: Dataset; url?: string }) {
   const route = routeOf(loc.path, years);
   const settings = useMemo(() => parseState(loc.search, years).settings, [loc.search, years]);
   const query = serializeSettings(settings);
+  // Where to scroll once the next route has rendered; `n` repeats a jump to the same hash.
+  const [jump, setJump] = useState<{ hash: string; n: number } | null>(null);
+  const jumpTo = (hash: string) => setJump((j) => ({ hash, n: (j?.n ?? 0) + 1 }));
 
   const push = (path: string, hash = "") => {
     history.pushState(null, "", path + hash);
     setLoc(here());
-    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
-    else scrollTo?.(0, 0);
+    jumpTo(hash);
   };
+
+  useEffect(() => {
+    if (!jump) return;
+    if (jump.hash) document.getElementById(jump.hash.slice(1))?.scrollIntoView();
+    else scrollTo?.(0, 0);
+  }, [jump]);
 
   useEffect(() => {
     const moved = legacyPath(location.search, location.hash, years);
@@ -60,7 +68,7 @@ export function App({ data, url }: { data: Dataset; url?: string }) {
       history.replaceState(null, "", BASE + moved);
       setLoc(here());
     }
-    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+    if (location.hash) jumpTo(location.hash);
     const onPop = () => setLoc(here());
     const onClick = (e: MouseEvent) => {
       const next = internal(e);

@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/preact";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/preact";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "../../src/ui/App.tsx";
 import { data } from "../fixture.ts";
 
@@ -67,7 +67,7 @@ describe("home: every election with your rules", () => {
 });
 
 describe("navigation", () => {
-  it("follows internal links in the page, keeping settings, and handles back", () => {
+  it("follows internal links in the page, keeping settings, and handles back", async () => {
     open("/?rule=historical");
     const table = screen.getAllByRole("table")[0]!;
     fireEvent.click(within(table).getByRole("link", { name: "1992" }));
@@ -77,7 +77,15 @@ describe("navigation", () => {
     expect(document.title).toMatch(/^1992 Election \(Dee vs\. Arr\)/);
     fireEvent.click(screen.getByRole("link", { name: "1996 →" }));
     expect(h1()).toBe("The 1996 election");
+    const back = new Promise((resolve) => addEventListener("popstate", resolve, { once: true }));
     history.back();
+    await back;
+    await waitFor(() => expect(h1()).toBe("The 1992 election"));
+    expect(location.pathname + location.search).toBe("/elections/1992/?rule=historical");
+  });
+
+  it("follows the address when it changes outside the app", () => {
+    open("/");
     history.replaceState(null, "", "/about/");
     fireEvent(window, new PopStateEvent("popstate"));
     expect(h1()).toBe("How it works");
@@ -94,7 +102,13 @@ describe("navigation", () => {
     expect(h1()).toBe("How it works");
   });
 
-  it("moves links to the old single-page site", () => {
+  it("moves links to the old single-page site and scrolls to the old anchor", async () => {
+    const scroll = vi.spyOn(Element.prototype, "scrollIntoView");
+    open("/?year=1992&rule=historical#flips");
+    expect(location.pathname).toBe("/elections/1992/");
+    await waitFor(() => expect(scroll.mock.contexts).toContain(document.getElementById("flips")));
+    scroll.mockRestore();
+    cleanup();
     open("/?year=1992&rule=historical#about");
     expect(location.pathname).toBe("/about/");
     expect(location.search).toBe("?rule=historical");
