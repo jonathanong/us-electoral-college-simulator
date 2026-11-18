@@ -1,6 +1,8 @@
-import { allocate, leader } from "./allocate.ts";
+import { leader } from "./allocate.ts";
 import { apportion, seatsAsIfState } from "./apportion.ts";
 import { censusFor, houseSize, majorityOf } from "./house.ts";
+import { bonusFor, decide, nationalPopular, sumVotes, transfersFor } from "./national.ts";
+import { allocateState } from "./systems.ts";
 import type { Dataset, Election, Settings, Simulation, StateCode, Votes } from "./types.ts";
 
 export function getElection(data: Dataset, year: number): Election {
@@ -58,27 +60,23 @@ export function electoralVotesFor(
   return ev;
 }
 
-export function sumVotes(rows: Iterable<Votes>): Record<string, number> {
-  const totals: Record<string, number> = {};
-  for (const row of rows) {
-    for (const [id, n] of Object.entries(row)) totals[id] = (totals[id] ?? 0) + n;
-  }
-  return totals;
-}
-
 export function winnerOf(totals: Votes, total: number): string | null {
   const top = leader(totals);
   return (totals[top] ?? 0) >= majorityOf(total) ? top : null;
 }
+
+const sumOf = (votes: Votes) => Object.values(votes).reduce((a, b) => a + b, 0);
 
 export function simulate(data: Dataset, year: number, settings: Settings): Simulation {
   const election = getElection(data, year);
   const { census, seats, pops } = seatsFor(data, election, settings);
   const historical = settings.rule.kind === "historical";
   const ev = electoralVotesFor(data, election, census, seats, pops, historical);
+  const popular = nationalPopular(election);
+  const transfers = transfersFor(year, popular, settings);
   const states = [...election.states.values()].map((result) => {
     const electoralVotes = ev.get(result.state)!;
-    const allocation = allocate(result, electoralVotes, settings.allocation);
+    const allocation = allocateState(result, electoralVotes, settings, transfers);
     return {
       state: result.state,
       seats: seats.get(result.state) ?? 0,
@@ -88,19 +86,22 @@ export function simulate(data: Dataset, year: number, settings: Settings): Simul
       winner: leader(allocation),
     };
   });
-  const totals = sumVotes(states.map((s) => s.allocation));
-  const totalElectoralVotes = states.reduce((a, s) => a + s.electoralVotes, 0);
+  const bonus = bonusFor(settings, popular);
+  const totals = sumVotes([...states.map((s) => s.allocation), bonus]);
+  const totalElectoralVotes = states.reduce((a, s) => a + s.electoralVotes, 0) + sumOf(bonus);
   const actualTotals = sumVotes([...election.states.values()].map((s) => s.actual));
   const actualTotal = states.reduce((a, s) => a + s.actualElectoralVotes, 0);
   return {
     year,
+    system: settings.system,
     census,
     houseSize: [...seats.values()].reduce((a, b) => a + b, 0),
     states,
     totals,
     totalElectoralVotes,
-    majority: majorityOf(totalElectoralVotes),
-    winner: winnerOf(totals, totalElectoralVotes),
+    ...decide(settings, totals, totalElectoralVotes, popular),
+    bonus,
+    popular,
     actualWinner: winnerOf(actualTotals, actualTotal),
   };
 }

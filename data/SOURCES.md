@@ -87,6 +87,15 @@ Borderline exclusions: 1920 Christensen (0.99%), 1976 McCarthy (0.91%), 2012 Gar
   years) the district winner is the statewide winner, which is verified because all of the state's
   electoral votes went to one candidate.
 
+### `state-totals.csv` (`year,state,total_votes`)
+
+Total presidential votes cast in each state, for every candidate on the ballot, from the "State total"
+column of the same Wikipedia tables (`scripts/build-totals.ts`). Where the listed roster candidates'
+votes exceed that total (a few states where MIT EDSL values were swapped in), the listed sum is used.
+The simulator counts `total_votes` minus the roster candidates as "Others", so candidates under 1%
+nationally still count in each state's vote shares (e.g. McMullin in Utah 2016, the unpledged
+elector slates in South Carolina 1956 and Alabama 1964).
+
 ## Judgement calls and uncertain values
 
 - 1910-1930 and 1970/1980 apportionment populations are derived (see above), not copied from a table.

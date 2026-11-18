@@ -1,4 +1,5 @@
 import type { Candidate, Dataset, Election, StateResult } from "../engine/types.ts";
+import { OTHER } from "../engine/national.ts";
 import { parseCsv, toInt } from "./csv.ts";
 import { CODE_BY_NAME } from "./states.ts";
 
@@ -9,6 +10,8 @@ export interface RawFiles {
   electoralVotes: string;
   faithless: string;
   popularVotes: string;
+  /** Total presidential votes per state, so unlisted candidates count as "other". */
+  stateTotals: string;
 }
 
 /** Seats granted on admission between censuses: AZ/NM (1912) and AK/HI (1959). */
@@ -61,6 +64,17 @@ function loadVotes(text: string, column: string): Nested<Tally> {
   return out;
 }
 
+/** Votes for candidates outside the roster (under 1% nationally), from state totals. */
+function withOther(popular: Nested<Tally>, text: string): void {
+  for (const row of parseCsv(text)) {
+    const tally = popular.get(toInt(row["year"])!)?.get(row["state"]!);
+    if (!tally) continue;
+    const listed = Object.values(tally).reduce((a, b) => a + b, 0);
+    const rest = toInt(row["total_votes"])! - listed;
+    if (rest > 0) tally[OTHER] = rest;
+  }
+}
+
 function pledgedFrom(actual: Tally, faithless: Record<string, string>[]): Tally {
   const pledged = { ...actual };
   for (const row of faithless) {
@@ -82,6 +96,7 @@ export function buildDataset(files: RawFiles): Dataset {
   }
   const electoral = loadVotes(files.electoralVotes, "electoral_votes");
   const popular = loadVotes(files.popularVotes, "votes");
+  withOther(popular, files.stateTotals);
   const faithless = parseCsv(files.faithless);
   const elections = new Map<number, Election>();
   for (const [year, byState] of [...electoral].toSorted((a, b) => a[0] - b[0])) {
@@ -96,7 +111,10 @@ export function buildDataset(files: RawFiles): Dataset {
         districted: year >= (DISTRICTED_SINCE[state] ?? Infinity),
       });
     }
-    elections.set(year, { year, candidates: candidates.get(year) ?? [], states });
+    const roster = candidates.get(year) ?? [];
+    const hasOther = [...states.values()].some((s) => s.popular[OTHER]);
+    const other = { id: OTHER, name: "Other candidates", party: "Other" };
+    elections.set(year, { year, candidates: hasOther ? [...roster, other] : roster, states });
   }
   return { elections, populations, historicalSeats };
 }

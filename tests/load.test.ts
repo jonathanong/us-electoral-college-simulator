@@ -41,7 +41,10 @@ describe("buildDataset", () => {
 
   it("builds elections with pledged splits and district flags", () => {
     const e = data.elections.get(1992)!;
-    expect(e.candidates.map((c) => c.id)).toEqual(["dem", "rep", "ind"]);
+    expect(e.candidates.map((c) => c.id)).toEqual(["dem", "rep", "ind", "other"]);
+    // State totals add unlisted votes as "other"; equal totals (NE) and unknown states add nothing.
+    expect(e.states.get("CA")!.popular).toEqual({ dem: 600, rep: 500, other: 50 });
+    expect(e.states.get("NE")!.popular).toEqual({ rep: 300, dem: 280 });
     expect([...e.states.keys()]).toEqual(["CA", "DC", "NE", "WY"]);
     expect(e.states.get("WY")).toMatchObject({ actual: { ind: 3 }, pledged: { rep: 3 } });
     expect(e.states.get("DC")!.pledged).toEqual({ dem: 3 });

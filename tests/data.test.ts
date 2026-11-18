@@ -11,6 +11,8 @@ const historical: Settings = {
   rule: { kind: "historical" },
   method: "huntington-hill",
   allocation: "electors",
+  system: "winner-take-all",
+  transfers: {},
 };
 
 const WINNERS: Record<number, string> = {
@@ -148,6 +150,8 @@ describe("published spot checks", () => {
     const points = sweep(dataset, 2000, {
       method: "huntington-hill",
       allocation: "electors",
+      system: "winner-take-all",
+      transfers: {},
       minSize: 100,
       maxSize: 1000,
     });

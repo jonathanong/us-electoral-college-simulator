@@ -44,6 +44,7 @@ export const files: RawFiles = {
     "1992,WY,dem,60",
     "1992,WY,ind,",
   ].join("\n"),
+  stateTotals: "year,state,total_votes\n1992,CA,1150\n1992,NE,580\n1992,ZZ,9\n",
 };
 
 export const data = buildDataset(files);

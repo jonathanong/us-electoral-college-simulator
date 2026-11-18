@@ -29,6 +29,7 @@ const PARTICLES = new Set(["La", "Van", "De", "Du", "Von"]);
 /** Surname-ish short label, e.g. "Theodore Roosevelt" -> "Roosevelt". */
 export function shortName(candidates: readonly Candidate[], id: string | null): string {
   if (id === null) return "No majority";
+  if (id === "other") return "Others";
   const name = candidates.find((c) => c.id === id)?.name ?? id;
   const words = name.replace(/,? (Jr\.?|Sr\.?|II|III)$/, "").split(" ");
   const last = words.at(-1)!;

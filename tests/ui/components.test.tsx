@@ -15,6 +15,9 @@ const candidates = [
 function sim(over: Partial<Simulation>): Simulation {
   return {
     year: 2000,
+    system: "winner-take-all",
+    bonus: {},
+    popular: {},
     census: 1990,
     houseSize: 435,
     states: [],
@@ -41,7 +44,7 @@ describe("ResultBar", () => {
       />,
     );
     expect(screen.getByText(/Al Gore wins instead of George W. Bush/)).toBeTruthy();
-    expect(screen.getByText("real House: 0")).toBeTruthy();
+    expect(screen.getByText("actual electors: 0")).toBeTruthy();
     rerender(<ResultBar sim={sim({ winner: null })} actual={sim({})} candidates={candidates} />);
     expect(screen.getByText(/the House would pick/)).toBeTruthy();
     rerender(<ResultBar sim={sim({})} actual={sim({ winner: null })} candidates={candidates} />);

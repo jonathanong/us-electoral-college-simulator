@@ -8,6 +8,8 @@ const historical: Settings = {
   rule: { kind: "historical" },
   method: "huntington-hill",
   allocation: "electors",
+  system: "winner-take-all",
+  transfers: {},
 };
 
 describe("simulate", () => {
@@ -37,7 +39,12 @@ describe("simulate", () => {
   });
 
   it("lets the popular winner take each state, keeping district estimates", () => {
-    const sim = simulate(data, 1992, { ...historical, allocation: "popular" });
+    const sim = simulate(data, 1992, {
+      ...historical,
+      allocation: "popular",
+      system: "winner-take-all",
+      transfers: {},
+    });
     expect(sim.totals).toEqual({ dem: 15, rep: 4 });
   });
 
@@ -57,11 +64,39 @@ describe("simulate", () => {
   });
 });
 
+describe("voting systems in simulate and sweep", () => {
+  it("adds bonus electors and matches the sweep at the same size", () => {
+    const settings: Settings = {
+      ...historical,
+      rule: { kind: "fixed", size: 20 },
+      system: "bonus",
+    };
+    const sim = simulate(data, 1992, settings);
+    expect(sim.bonus).toEqual({ dem: 102 });
+    expect(sim.totalElectoralVotes).toBe(
+      sim.states.reduce((a, s) => a + s.electoralVotes, 0) + 102,
+    );
+    const point = sweep(data, 1992, { ...settings, minSize: 20, maxSize: 20 })[0]!;
+    expect(point.totals).toEqual(sim.totals);
+    expect(point.winner).toBe(sim.winner);
+    expect(sim.popular).toEqual({ dem: 940, rep: 840, other: 50 });
+    const fractional = {
+      ...settings,
+      rule: { kind: "fixed" as const, size: 3 },
+      system: "fractional" as const,
+    };
+    const frac = sweep(data, 1992, { ...fractional, minSize: 3, maxSize: 3 })[0]!;
+    expect(frac.totalElectoralVotes).toBe(simulate(data, 1992, fractional).totalElectoralVotes);
+  });
+});
+
 describe("sweep", () => {
   it("evaluates every House size for divisor and Hamilton methods", () => {
     const hh = sweep(data, 1992, {
       method: "huntington-hill",
       allocation: "popular",
+      system: "winner-take-all",
+      transfers: {},
       minSize: 1,
       maxSize: 30,
     });
@@ -71,17 +106,23 @@ describe("sweep", () => {
       rule: { kind: "fixed", size: 30 },
       method: "huntington-hill",
       allocation: "popular",
+      system: "winner-take-all",
+      transfers: {},
     });
     expect(hh.at(-1)!.totals).toEqual(direct.totals);
     const ham = sweep(data, 1992, {
       method: "hamilton",
       allocation: "electors",
+      system: "winner-take-all",
+      transfers: {},
       minSize: 10,
       maxSize: 12,
     });
     const late = sweep(data, 1992, {
       method: "webster",
       allocation: "electors",
+      system: "winner-take-all",
+      transfers: {},
       minSize: 10,
       maxSize: 11,
     });
@@ -93,6 +134,8 @@ describe("sweep", () => {
     const points = sweep(data, 1992, {
       method: "webster",
       allocation: "popular",
+      system: "winner-take-all",
+      transfers: {},
       minSize: 3,
       maxSize: 60,
     });

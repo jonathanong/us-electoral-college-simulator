@@ -14,10 +14,24 @@ export type HouseRule =
 /** "electors": scale each state's pledged elector split. "popular": statewide plurality takes all. */
 export type Allocation = "electors" | "popular";
 
+/** How each state's electors are awarded, and how the national winner is decided. */
+export type VotingSystem =
+  | "winner-take-all"
+  | "district"
+  | "proportional"
+  | "fractional"
+  | "bonus"
+  | "ranked-choice"
+  | "national";
+
 export interface Settings {
   rule: HouseRule;
   method: Method;
   allocation: Allocation;
+  system: VotingSystem;
+  /** Ranked choice: percent (0-100) of each eliminated candidate's votes going to the national
+   * popular-vote leader rather than the runner-up, keyed by `${year}.${candidateId}`. */
+  transfers: Readonly<Record<string, number>>;
 }
 
 export interface Candidate {
@@ -65,13 +79,19 @@ export interface StateOutcome {
 
 export interface Simulation {
   year: number;
+  system: VotingSystem;
   census: number;
   houseSize: number;
   states: StateOutcome[];
   totals: Votes;
   totalElectoralVotes: number;
+  /** Electoral votes needed to win (popular votes are counted directly under "national"). */
   majority: number;
-  /** null when nobody reaches a majority (contingent election in the House). */
+  /** Bonus electors awarded to the national popular-vote winner ("bonus" only). */
+  bonus: Votes;
+  /** National popular votes by candidate (including "other"). */
+  popular: Votes;
+  /** null when nobody wins outright; `fallback` says what happens then. */
   winner: string | null;
   actualWinner: string | null;
 }
