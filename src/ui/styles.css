@@ -133,7 +133,6 @@ main.container {
   border-bottom: 1px solid var(--border);
 }
 .site-header-inner {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 8px 24px;
@@ -776,10 +775,12 @@ main > .prose {
     flex-basis: 100%;
     margin: 0 -10px 6px;
   }
+  .brand {
+    min-height: 48px;
+  }
+  /* The icon shares the brand's row; the nav wraps onto its own row below. */
   .site-header .gh {
-    position: absolute;
-    right: 16px;
-    top: 18px;
+    order: 2;
   }
   .hero {
     padding: 32px 0 24px;
