@@ -80,6 +80,13 @@ describe("voting systems in simulate and sweep", () => {
     expect(point.totals).toEqual(sim.totals);
     expect(point.winner).toBe(sim.winner);
     expect(sim.popular).toEqual({ dem: 940, rep: 840, other: 50 });
+    const fractional = {
+      ...settings,
+      rule: { kind: "fixed" as const, size: 3 },
+      system: "fractional" as const,
+    };
+    const frac = sweep(data, 1992, { ...fractional, minSize: 3, maxSize: 3 })[0]!;
+    expect(frac.totalElectoralVotes).toBe(simulate(data, 1992, fractional).totalElectoralVotes);
   });
 });
 

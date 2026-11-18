@@ -57,6 +57,7 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
         ...settings,
         rule: { kind: "historical" },
         system: "winner-take-all",
+        allocation: "electors",
       }),
     [data, year, settings],
   );
@@ -85,7 +86,8 @@ export function App({ data, search }: { data: Dataset; search?: string }) {
         </p>
         <nav>
           <a href="#answer">Answer</a> <a href="#methods">Voting methods</a>{" "}
-          <a href="#explore">Explore</a> <a href="#flips">Flip finder</a>{" "}
+          <a href="#explore">Explore</a>{" "}
+          {settings.system !== "national" && <a href="#flips">Flip finder</a>}{" "}
           <a href="#about">Method</a>{" "}
           <a href={REPO_URL} class="gh">
             GitHub

@@ -91,6 +91,8 @@ describe("App", () => {
     expect(screen.queryByLabelText("House size")).toBeNull();
     expect(screen.queryByLabelText("Split states")).toBeNull();
     expect(document.getElementById("flips")).toBeNull();
+    expect(screen.queryByRole("link", { name: "Flip finder" })).toBeNull();
+    expect(screen.getByRole("img", { name: "Popular vote shares" })).toBeTruthy();
     expect(screen.getByText(/House size doesn.t matter/)).toBeTruthy();
     change(select("Voting method"), "fractional");
     expect(screen.getByText(/most wins/)).toBeTruthy();

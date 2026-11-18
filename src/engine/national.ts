@@ -58,11 +58,12 @@ export function decide(
   const majority = majorityOf(totalElectoralVotes);
   const top = leader(totals);
   // Lodge–Gossett: the most electoral votes wins; an exact tie goes to the popular-vote leader.
+  // Compare whole thousandths, since summed fractions pick up floating-point error.
   if (settings.system === "fractional") {
-    const tied = Object.keys(totals).filter((id) => totals[id] === totals[top]);
-    const pick =
-      tied.length > 1 ? leader(Object.fromEntries(tied.map((id) => [id, popular[id] ?? 0]))) : top;
-    return { majority, winner: pick || null };
+    const thousandths = (id: string) => Math.round(totals[id]! * 1000);
+    const tied = Object.keys(totals).filter((id) => thousandths(id) === thousandths(top));
+    const byPopular = Object.fromEntries(tied.map((id) => [id, popular[id] ?? 0]));
+    return { majority, winner: (tied.length > 1 ? leader(byPopular) : top) || null };
   }
   return { majority, winner: (totals[top] ?? 0) >= majority ? top : null };
 }

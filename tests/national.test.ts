@@ -56,5 +56,7 @@ describe("decide", () => {
     expect(decide(s, { a: 5, b: 5 }, 10, { a: 1, b: 2 }).winner).toBe("b");
     expect(decide(s, { a: 5, b: 5 }, 10, {}).winner).toBe("a");
     expect(decide(s, {}, 0, {}).winner).toBeNull();
+    // 1.1 + 2.2 sums to 3.3000000000000003, which still ties 3.3.
+    expect(decide(s, { a: 1.1 + 2.2, b: 3.3, c: 2.4 }, 9, { a: 1, b: 2 }).winner).toBe("b");
   });
 });

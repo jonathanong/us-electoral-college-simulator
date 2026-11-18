@@ -33,7 +33,8 @@ export function sweep(data: Dataset, year: number, options: SweepOptions): Sweep
     const ev = electoralVotesFor(data, election, census, seats, pops, false);
     const rows = [...ev].map(([s, n]) => allocateState(results.get(s)!, n, settings, transfers));
     const totals = sumVotes([...rows, bonus]);
-    const total = Object.values(totals).reduce((a, b) => a + b, 0);
+    // Capacity comes from the electors, not the (possibly fractional) allocations.
+    const total = [...ev.values(), ...Object.values(bonus)].reduce((a, b) => a + b, 0);
     const { winner } = decide(settings, totals, total, popular);
     return { size, totals, totalElectoralVotes: total, winner };
   };

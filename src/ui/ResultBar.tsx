@@ -40,7 +40,11 @@ export function ResultBar({ sim, actual, candidates }: Props) {
   return (
     <section class="result" aria-live="polite">
       <p class={flipped ? "verdict flipped" : "verdict"}>{verdict(sim, actual, candidates)}</p>
-      <div class="bar" role="img" aria-label="Electoral vote totals">
+      <div
+        class="bar"
+        role="img"
+        aria-label={national ? "Popular vote shares" : "Electoral vote totals"}
+      >
         {rows.map(([id, n]) => (
           <span
             key={id}
