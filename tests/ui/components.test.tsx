@@ -1,34 +1,11 @@
 import { render, screen } from "@testing-library/preact";
 import { describe, expect, it } from "vitest";
-import type { Simulation } from "../../src/engine/types.ts";
 import { AboutPage } from "../../src/ui/About.tsx";
 import { FlipChart, runsOf } from "../../src/ui/FlipChart.tsx";
 import { ResultBar } from "../../src/ui/ResultBar.tsx";
 import { Summary } from "../../src/ui/Summary.tsx";
-import { UsMap } from "../../src/ui/UsMap.tsx";
 
-const candidates = [
-  { id: "d", name: "Al Gore", party: "D" },
-  { id: "r", name: "George W. Bush", party: "R" },
-];
-
-function sim(over: Partial<Simulation>): Simulation {
-  return {
-    year: 2000,
-    system: "winner-take-all",
-    bonus: {},
-    popular: {},
-    census: 1990,
-    houseSize: 435,
-    states: [],
-    totals: { r: 271, d: 267 },
-    totalElectoralVotes: 538,
-    majority: 270,
-    winner: "r",
-    actualWinner: "r",
-    ...over,
-  };
-}
+import { candidates, sim } from "./sim.ts";
 
 describe("ResultBar", () => {
   it("describes same, changed and contingent outcomes", () => {
@@ -97,51 +74,6 @@ describe("FlipChart", () => {
       <FlipChart points={points} candidates={candidates} focus={null} marks={[]} />,
     );
     expect(none.container.innerHTML).toBe("");
-  });
-});
-
-describe("UsMap", () => {
-  const states: Simulation["states"] = [
-    {
-      state: "TX",
-      seats: 40,
-      electoralVotes: 42,
-      actualElectoralVotes: 40,
-      allocation: { r: 42 },
-      winner: "r",
-    },
-    {
-      state: "VT",
-      seats: 1,
-      electoralVotes: 3,
-      actualElectoralVotes: 3,
-      allocation: { d: 3 },
-      winner: "d",
-    },
-    {
-      state: "CA",
-      seats: 50,
-      electoralVotes: 50,
-      actualElectoralVotes: 55,
-      allocation: { d: 50 },
-      winner: "d",
-    },
-  ];
-
-  it("labels electoral votes or changes", () => {
-    const { container, rerender } = render(
-      <UsMap sim={sim({ states })} candidates={candidates} mode="winner" />,
-    );
-    expect(container.querySelector('[data-state="TX"]')!.getAttribute("fill")).toBe("var(--rep)");
-    expect(container.querySelector('[data-state="NY"]')!.getAttribute("class")).toBe(
-      "state absent",
-    );
-    expect(screen.getByText("42")).toBeTruthy();
-    expect(container.querySelectorAll(".callout")).toHaveLength(1);
-    rerender(<UsMap sim={sim({ states })} candidates={candidates} mode="change" />);
-    expect(screen.getByText("+2")).toBeTruthy();
-    expect(screen.getByText("-5")).toBeTruthy();
-    expect(screen.getByText("0")).toBeTruthy();
   });
 });
 
