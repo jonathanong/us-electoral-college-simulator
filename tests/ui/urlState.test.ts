@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { candidateColor, fullName, partyColor, shortName } from "../../src/ui/colors.ts";
-import { DEFAULT_STATE, parseState, serializeState } from "../../src/ui/urlState.ts";
+import { DEFAULT_STATE, parseState, serializeSettings } from "../../src/ui/urlState.ts";
 
 const years = [2000, 2024];
 
@@ -51,17 +51,18 @@ describe("voting system state", () => {
   });
 });
 
-describe("serializeState", () => {
-  it("round-trips", () => {
+describe("serializeSettings", () => {
+  it("round-trips non-default settings and omits defaults", () => {
     for (const q of [
-      "?year=2000&rule=fixed&size=700&method=webster&alloc=popular",
-      "?year=2024&rule=ratio&perRep=40000",
-      "?year=2024&rule=custom&sizes=1910%3A500%2C2020%3A900",
-      "?year=2024&rule=cube-root",
-      "?year=2024&rule=cube-root&system=ranked-choice&rcv=1992.perot%3A60%2C2000.nader%3A70",
+      "?rule=fixed&size=700&method=webster&alloc=popular",
+      "?rule=ratio&perRep=40000",
+      "?rule=custom&sizes=1910%3A500%2C2020%3A900",
+      "?rule=historical",
+      "?system=ranked-choice&rcv=1992.perot%3A60%2C2000.nader%3A70",
     ]) {
-      expect(serializeState(parseState(q, years))).toBe(q);
+      expect(serializeSettings(parseState(q, years).settings)).toBe(q);
     }
+    expect(serializeSettings(DEFAULT_STATE.settings)).toBe("");
   });
 });
 

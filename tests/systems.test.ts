@@ -99,7 +99,7 @@ describe("allocateState", () => {
 
 describe("transferCandidates", () => {
   it("lists everyone but the front-runners, biggest first and others last", async () => {
-    const { transferCandidates } = await import("../src/ui/MethodControls.tsx");
+    const { transferCandidates } = await import("../src/ui/Transfers.tsx");
     const popular = { d: 50, r: 40, p: 3, other: 9, g: 5 };
     const election = {
       year: 2000,

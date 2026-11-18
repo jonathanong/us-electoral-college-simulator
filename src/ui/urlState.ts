@@ -97,9 +97,11 @@ export function parseState(search: string, years: readonly number[]): ViewState 
   };
 }
 
-export function serializeState({ year, settings }: ViewState): string {
-  const params = new URLSearchParams({ year: String(year), rule: settings.rule.kind });
+/** Query string for non-default settings ("" when everything is default). */
+export function serializeSettings(settings: Settings): string {
+  const params = new URLSearchParams();
   const { rule } = settings;
+  if (rule.kind !== DEFAULT_STATE.settings.rule.kind) params.set("rule", rule.kind);
   if (rule.kind === "fixed") params.set("size", String(rule.size));
   if (rule.kind === "ratio") params.set("perRep", String(rule.perRep));
   if (rule.kind === "custom") {
@@ -113,5 +115,6 @@ export function serializeState({ year, settings }: ViewState): string {
   if (settings.system !== DEFAULT_STATE.settings.system) params.set("system", settings.system);
   const transfers = Object.entries(settings.transfers).map(([k, v]) => `${k}:${v}`);
   if (transfers.length > 0) params.set("rcv", transfers.join(","));
-  return `?${params}`;
+  const query = params.toString();
+  return query ? `?${query}` : "";
 }

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/preact";
 import { describe, expect, it } from "vitest";
 import type { Simulation } from "../../src/engine/types.ts";
-import { About } from "../../src/ui/About.tsx";
+import { AboutPage } from "../../src/ui/About.tsx";
 import { FlipChart, runsOf } from "../../src/ui/FlipChart.tsx";
 import { ResultBar } from "../../src/ui/ResultBar.tsx";
 import { Summary } from "../../src/ui/Summary.tsx";
@@ -166,7 +166,7 @@ describe("Summary and About", () => {
   });
 
   it("links references and the repo", () => {
-    render(<About />);
+    render(<AboutPage />);
     const links = screen.getAllByRole("link");
     expect(links.some((a) => a.getAttribute("href")!.includes("github.com"))).toBe(true);
   });
