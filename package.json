@@ -16,6 +16,7 @@
     "data:validate": "node scripts/validate.ts && node scripts/validate-hh.ts"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "5.3.0",
     "d3-geo": "^3.1.2",
     "polylabel": "2.1.0",
     "preact": "^11.2.0",

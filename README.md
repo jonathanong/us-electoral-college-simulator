@@ -1,4 +1,4 @@
-# What if the House had kept growing?
+# Electoral College Simulator
 
 [![CI](https://github.com/jonathanong/us-electoral-college-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/jonathanong/us-electoral-college-simulator/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/jonathanong/us-electoral-college-simulator/graph/badge.svg)](https://codecov.io/gh/jonathanong/us-electoral-college-simulator)
@@ -8,18 +8,21 @@
 Each state's electoral votes equal its House seats plus two. The House stopped growing at 435 seats
 after the 1910 census ([Apportionment Act of 1911](https://en.wikipedia.org/wiki/Apportionment_Act_of_1911),
 made permanent by the [Reapportionment Act of 1929](https://en.wikipedia.org/wiki/Reapportionment_Act_of_1929)).
-This site replays every presidential election from 1912 to 2024 under a different House size and
-shows whether the winner changes.
+This site replays every presidential election from 1912 to 2024 with a bigger House or a different
+way of awarding electors, and shows whether the winner changes.
 
 ## Features
 
-- **The short answer:** every election under the real House, the
+- **All elections** (`/`): pick every rule at once (House size, apportionment method, split states
+  and voting method) and see each election's real result next to the result under your rules. Under
+  ranked choice, each election gets its own sliders.
+- **House size** (`/house-size/`): every election under the real House, the
   [cube root rule](https://thearp.org/blog/the-cube-root-rule/) and the
   [Wyoming rule](https://thearp.org/blog/the-wyoming-rule/), with changed outcomes highlighted.
-- **Explore an election:** pick a year and a House size rule (fixed size, people per seat, or a
+- **One page per election** (`/elections/2000/`): pick a year and a House size rule (fixed size, people per seat, or a
   custom size after each census), an apportionment method (Huntington–Hill, Webster, Jefferson,
   Hamilton), and how split states are handled. A map shows winners or the change in electors.
-- **What if we voted differently?** Every election under real proposals to change how electors are
+- **Voting methods** (`/voting-methods/`): every election under real proposals to change how electors are
   awarded: a national popular vote (the National Popular Vote compact and the 1969 Bayh–Celler
   amendment), proportional electors (Colorado Amendment 36, 2004), fractional electors (the 1950
   Lodge–Gossett amendment), the statewide winner plus proportional House electors (an estimate of the
@@ -27,7 +30,8 @@ shows whether the winner changes.
   (1978), and ranked choice in each state (Maine since 2020), with sliders for where eliminated
   candidates' voters go. Sources for each rule are on the page.
 - **Flip finder:** every House size from 100 to 2,000 for one election, showing where the winner changes.
-- Shareable URLs, and works on phones and desktops in light and dark mode.
+- Every page is prerendered for search engines. Settings live in the query string, so links keep
+  them, and the site works on phones and desktops in light and dark mode.
 
 ## Method
 

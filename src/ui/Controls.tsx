@@ -38,10 +38,11 @@ function defaultRule(kind: HouseRule["kind"], current: HouseRule): HouseRule {
 }
 
 interface Props {
-  years: readonly number[];
-  year: number;
+  /** The election picker; the all-elections grid has none. */
+  years?: readonly number[];
+  year?: number;
+  onYear?: (year: number) => void;
   settings: Settings;
-  onYear: (year: number) => void;
   onSettings: (settings: Settings) => void;
 }
 
@@ -54,20 +55,22 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
   const split = system === "winner-take-all" || system === "bonus";
   const setRule = (next: HouseRule) => onSettings({ ...settings, rule: next });
   return (
-    <form class="controls" onSubmit={(e) => e.preventDefault()}>
-      <label>
-        Election
-        <select value={year} onChange={(e) => onYear(num(e))}>
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
-      </label>
+    <form class="field-group" onSubmit={(e) => e.preventDefault()}>
+      {years && onYear && (
+        <label class="field">
+          <span class="field-label">Election</span>
+          <select value={year} onChange={(e) => onYear(num(e))}>
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       {house && (
-        <label>
-          House size
+        <label class="field">
+          <span class="field-label">House size</span>
           <select
             value={rule.kind}
             onChange={(e) =>
@@ -88,8 +91,10 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
         </label>
       )}
       {house && rule.kind === "fixed" && (
-        <label class="wide">
-          Seats: <output>{rule.size}</output>
+        <label class="field">
+          <span class="field-label">
+            Seats <output>{rule.size}</output>
+          </span>
           <input
             type="range"
             min={100}
@@ -101,8 +106,8 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
         </label>
       )}
       {house && rule.kind === "ratio" && (
-        <label>
-          People per seat
+        <label class="field">
+          <span class="field-label">People per seat</span>
           <input
             type="number"
             min={30000}
@@ -113,8 +118,8 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
         </label>
       )}
       {house && (
-        <label>
-          Apportionment method
+        <label class="field">
+          <span class="field-label">Apportionment method</span>
           <select
             value={settings.method}
             onChange={(e) =>
@@ -133,8 +138,8 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
         </label>
       )}
       {split && (
-        <label>
-          Split states
+        <label class="field">
+          <span class="field-label">Split states</span>
           <select
             value={settings.allocation}
             onChange={(e) =>
@@ -150,8 +155,8 @@ export function Controls({ years, year, settings, onYear, onSettings }: Props) {
         </label>
       )}
       {house && rule.kind === "custom" && (
-        <fieldset class="census-sizes">
-          <legend>Seats after each census (blank = 435)</legend>
+        <fieldset class="field census-sizes">
+          <legend class="field-label">Seats after each census (blank = 435)</legend>
           {CENSUSES.map((census) => (
             <label key={census}>
               {census}
