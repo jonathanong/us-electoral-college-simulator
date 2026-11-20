@@ -3,7 +3,7 @@ import { simulate } from "../engine/simulate.ts";
 import type { Candidate, Dataset, Settings, Simulation } from "../engine/types.ts";
 import { candidateColor, shortName } from "./colors.ts";
 import { formatEv } from "./systems.ts";
-import { TransferSliders, transferCandidates } from "./Transfers.tsx";
+import { RcvEffect, TransferSliders, rcvChanges, transferCandidates } from "./Transfers.tsx";
 import { DEFAULT_STATE } from "./urlState.ts";
 
 export interface GridRow {
@@ -88,6 +88,7 @@ export function Grid({ data, rows, settings, onSettings, hrefFor }: Props) {
                 {sliders && (
                   <tr class="sub">
                     <td colSpan={3}>
+                      <RcvEffect lead states={rcvChanges(data, sim, settings)} />
                       <TransferSliders
                         election={election}
                         settings={settings}

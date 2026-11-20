@@ -387,16 +387,21 @@ input[type="range"] {
   font-size: 0.8125rem;
 }
 .transfer-head {
+  font-weight: 500;
+}
+.transfer-ends {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  flex-wrap: wrap;
-}
-.transfer-split {
   color: var(--muted-fg);
   font-variant-numeric: tabular-nums;
 }
-.transfer-split output {
+.transfer-end {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.transfer-ends output {
   color: var(--fg);
   font-weight: 500;
 }
@@ -828,4 +833,9 @@ main > .prose {
   .overview .badge {
     display: none;
   }
+}
+.transfer-effect {
+  margin: 0 0 8px;
+  font-size: 0.8125rem;
+  color: var(--muted-fg);
 }
