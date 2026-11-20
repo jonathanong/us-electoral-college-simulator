@@ -59,10 +59,10 @@ describe("home: every election with your rules", () => {
   it("shows ranked-choice sliders for each election in the grid", () => {
     open("/?system=ranked-choice");
     expect(screen.getByText(/in each election's row/)).toBeTruthy();
-    const slider = screen.getByLabelText("1992: share of Others voters ranking Dee next");
-    fireEvent.input(slider, { target: { value: "80" } });
+    const slider = screen.getByLabelText(/^1992: share of Others' voters ranking .* over Dee$/);
+    fireEvent.input(slider, { target: { value: "20" } });
     expect(location.search).toContain("rcv=1992.other%3A80");
-    expect(screen.getByText(/Others voters/).closest("label")!.textContent).toMatch(/Dee 80%/);
+    expect(slider.closest("label")!.textContent).toMatch(/Others' voters · .*Dee 80%/);
   });
 });
 
@@ -131,8 +131,8 @@ describe("pages", () => {
       within(nav).getByRole("link", { name: "All elections" }).getAttribute("aria-current"),
     ).toBe("page");
     change(select("Voting method"), "ranked-choice");
-    const slider = screen.getByLabelText("1992: share of Others voters ranking Dee next");
-    fireEvent.input(slider, { target: { value: "80" } });
+    const slider = screen.getByLabelText(/^1992: share of Others' voters ranking .* over Dee$/);
+    fireEvent.input(slider, { target: { value: "20" } });
     expect(location.search).toContain("rcv=1992.other%3A80");
     change(select("Voting method"), "national");
     expect(document.getElementById("flips")).toBeNull();

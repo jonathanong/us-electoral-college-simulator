@@ -33,6 +33,24 @@ export function resultText(sim: Simulation): string {
   return `${formatEv(sim.totals[sim.winner]!)} of ${formatEv(sim.totalElectoralVotes)}`;
 }
 
+/** States whose winner ranked choice changes, compared with plurality under the same rules. */
+export function rcvChanges(data: Dataset, sim: Simulation, settings: Settings): string[] {
+  const plurality = simulate(data, sim.year, { ...settings, system: "winner-take-all" });
+  const was = new Map(plurality.states.map((s) => [s.state, s.winner]));
+  return sim.states.filter((s) => was.get(s.state) !== s.winner).map((s) => s.state);
+}
+
+function RcvEffect({ states }: { states: readonly string[] }) {
+  return (
+    <p class="transfer-effect">
+      Where each eliminated candidate's voters go next.{" "}
+      {states.length === 0
+        ? "At these settings, no state's winner changes compared with plurality voting."
+        : `Compared with plurality voting, the winner changes in ${states.join(", ")}.`}
+    </p>
+  );
+}
+
 function Winner({ sim, candidates }: { sim: Simulation; candidates: readonly Candidate[] }) {
   return (
     <>
@@ -88,6 +106,7 @@ export function Grid({ data, rows, settings, onSettings, hrefFor }: Props) {
                 {sliders && (
                   <tr class="sub">
                     <td colSpan={3}>
+                      <RcvEffect states={rcvChanges(data, sim, settings)} />
                       <TransferSliders
                         election={election}
                         settings={settings}
