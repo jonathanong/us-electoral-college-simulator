@@ -3,7 +3,7 @@ import { simulate } from "../engine/simulate.ts";
 import type { Candidate, Dataset, Settings, Simulation } from "../engine/types.ts";
 import { candidateColor, shortName } from "./colors.ts";
 import { formatEv } from "./systems.ts";
-import { TransferSliders, transferCandidates } from "./Transfers.tsx";
+import { RcvEffect, TransferSliders, rcvChanges, transferCandidates } from "./Transfers.tsx";
 import { DEFAULT_STATE } from "./urlState.ts";
 
 export interface GridRow {
@@ -31,24 +31,6 @@ export function resultText(sim: Simulation): string {
     return `${((sim.popular[sim.winner]! / total) * 100).toFixed(1)}% of the vote`;
   }
   return `${formatEv(sim.totals[sim.winner]!)} of ${formatEv(sim.totalElectoralVotes)}`;
-}
-
-/** States whose winner ranked choice changes, compared with plurality under the same rules. */
-export function rcvChanges(data: Dataset, sim: Simulation, settings: Settings): string[] {
-  const plurality = simulate(data, sim.year, { ...settings, system: "winner-take-all" });
-  const was = new Map(plurality.states.map((s) => [s.state, s.winner]));
-  return sim.states.filter((s) => was.get(s.state) !== s.winner).map((s) => s.state);
-}
-
-function RcvEffect({ states }: { states: readonly string[] }) {
-  return (
-    <p class="transfer-effect">
-      Where each eliminated candidate's voters go next.{" "}
-      {states.length === 0
-        ? "At these settings, no state's winner changes compared with plurality voting."
-        : `Compared with plurality voting, the winner changes in ${states.join(", ")}.`}
-    </p>
-  );
 }
 
 function Winner({ sim, candidates }: { sim: Simulation; candidates: readonly Candidate[] }) {
@@ -106,7 +88,7 @@ export function Grid({ data, rows, settings, onSettings, hrefFor }: Props) {
                 {sliders && (
                   <tr class="sub">
                     <td colSpan={3}>
-                      <RcvEffect states={rcvChanges(data, sim, settings)} />
+                      <RcvEffect lead states={rcvChanges(data, sim, settings)} />
                       <TransferSliders
                         election={election}
                         settings={settings}

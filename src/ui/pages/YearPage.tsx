@@ -6,6 +6,7 @@ import { Controls } from "../Controls.tsx";
 import { FlipChart } from "../FlipChart.tsx";
 import { ACTUAL } from "../Grid.tsx";
 import { MethodControls } from "../MethodControls.tsx";
+import { rcvChanges } from "../Transfers.tsx";
 import { ResultBar } from "../ResultBar.tsx";
 import { matchup } from "../routes.ts";
 import { RulesPanel } from "../RulesPanel.tsx";
@@ -69,7 +70,12 @@ export function YearPage({
             settings={settings}
             onSettings={onSettings}
           />
-          <MethodControls election={election} settings={settings} onSettings={onSettings} />
+          <MethodControls
+            election={election}
+            changes={settings.system === "ranked-choice" ? rcvChanges(data, sim, settings) : []}
+            settings={settings}
+            onSettings={onSettings}
+          />
         </RulesPanel>
         <div class="workspace-main">
           <div class="card">

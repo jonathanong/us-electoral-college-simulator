@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/preact";
 import { describe, expect, it } from "vitest";
 import { dataset } from "../../src/data/index.ts";
 import { simulate } from "../../src/engine/simulate.ts";
-import { Grid, rcvChanges } from "../../src/ui/Grid.tsx";
-import { shareText } from "../../src/ui/Transfers.tsx";
+import { Grid } from "../../src/ui/Grid.tsx";
+import { rcvChanges, shareText } from "../../src/ui/Transfers.tsx";
 import { DEFAULT_STATE } from "../../src/ui/urlState.ts";
 
 const rcv = { ...DEFAULT_STATE.settings, system: "ranked-choice" as const };

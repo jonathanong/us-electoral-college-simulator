@@ -1,6 +1,7 @@
 import { OTHER, frontRunners, nationalPopular } from "../engine/national.ts";
 import { EVEN_SPLIT } from "../engine/rcv.ts";
-import type { Election, Settings } from "../engine/types.ts";
+import { simulate } from "../engine/simulate.ts";
+import type { Dataset, Election, Settings, Simulation } from "../engine/types.ts";
 import { candidateColor, shortName } from "./colors.ts";
 
 /** Candidates whose voters' next choices matter: everyone but the two national front-runners. */
@@ -16,6 +17,25 @@ export function transferCandidates(election: Election): string[] {
 export function shareText(votes: number, total: number): string {
   const pct = (votes / total) * 100;
   return pct < 0.1 ? "<0.1%" : `${pct.toFixed(1)}%`;
+}
+
+/** States whose winner ranked choice changes, compared with plurality under the same rules. */
+export function rcvChanges(data: Dataset, sim: Simulation, settings: Settings): string[] {
+  const plurality = simulate(data, sim.year, { ...settings, system: "winner-take-all" });
+  const was = new Map(plurality.states.map((s) => [s.state, s.winner]));
+  return sim.states.filter((s) => was.get(s.state) !== s.winner).map((s) => s.state);
+}
+
+/** Which states ranked choice changes; `lead` first says what the sliders below do. */
+export function RcvEffect({ states, lead }: { states: readonly string[]; lead?: boolean }) {
+  return (
+    <p class="transfer-effect">
+      {lead && "Where each eliminated candidate's voters go next. "}
+      {states.length === 0
+        ? "At these settings, no state's winner changes compared with plurality voting."
+        : `Compared with plurality voting, the winner changes in ${states.join(", ")}.`}
+    </p>
+  );
 }
 
 interface Props {
